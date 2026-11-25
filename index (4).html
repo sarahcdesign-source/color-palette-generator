@@ -1,0 +1,2441 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Web-Safe Color Palette Studio</title>
+  <meta name="description" content="Input 1 to 6 starting colors (HEX, RGB, or CMYK) or upload an image and generate a complete 216 web-safe palette up to 10 colors with real-time WCAG AA/AAA accessibility checks." />
+  <meta property="og:title" content="Web-Safe Color Palette Studio" />
+  <meta property="og:description" content="Input 1 to 6 starting colors (HEX, RGB, or CMYK) or upload an image and generate a complete 216 web-safe palette up to 10 colors with real-time WCAG AA/AAA accessibility checks." />
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 36 36'%3E%3Cpath d='M15.778 1.936c0-.676-.01-1.322-.033-1.936C3.833.33.326 3.84.001 15.761c.61.022 1.249.032 1.917.032 1.432 0 2.726-.047 3.893-.152 6.7-.601 9.216-3.122 9.814-9.83h.004c.103-1.162.15-2.45.15-3.877v.002Z' fill='%2368E246'/%3E%3Cpath d='M19.737 1.936c0-.676.011-1.32.034-1.936C31.683.33 35.19 3.84 35.515 15.761c-.61.022-1.249.032-1.917.032-1.432 0-2.726-.047-3.894-.152-6.699-.601-9.215-3.122-9.813-9.83h-.004a44.022 44.022 0 0 1-.15-3.877v.002Z' fill='%2310A3FF'/%3E%3Cpath d='M19.737 33.576c0 .675.011 1.32.034 1.935 11.912-.329 15.419-3.84 15.744-15.76-.61-.023-1.249-.032-1.917-.032-1.432 0-2.726.046-3.894.151-6.699.602-9.215 3.122-9.813 9.83h-.004a44.022 44.022 0 0 0-.15 3.878v-.002Z' fill='%23FFB82A'/%3E%3Cpath d='M15.777 33.576c0 .675-.011 1.32-.033 1.935-11.912-.329-15.42-3.84-15.745-15.76.61-.023 1.25-.032 1.917-.032 1.433 0 2.726.046 3.894.151 6.699.602 9.216 3.122 9.814 9.83h.003c.104 1.163.15 2.45.15 3.878v-.002Z' fill='%23FC57E5'/%3E%3C/svg%3E" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap" rel="stylesheet">
+  <style>
+    *, html, body, button, input, select, textarea {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    }
+    h1, h2, h3, h4, .font-display {
+      font-family: 'Plus Jakarta Sans', 'Inter', sans-serif;
+    }
+    .font-mono {
+      font-family: 'JetBrains Mono', monospace;
+      font-variant-numeric: tabular-nums;
+    }
+    html {
+      scroll-behavior: smooth;
+    }
+    .psq-btn {
+      background-color: #5A923D !important;
+      color: #FFFFFF !important;
+      border: 1px solid #4E8035 !important;
+      transition: background-color 150ms cubic-bezier(0.16, 1, 0.3, 1), border-color 150ms cubic-bezier(0.16, 1, 0.3, 1), opacity 150ms ease;
+    }
+    .psq-btn:hover:not(:disabled),
+    .psq-btn:active:not(:disabled),
+    .psq-btn[data-active="true"]:not(:disabled),
+    .psq-btn[data-clicked="true"]:not(:disabled),
+    .psq-btn[aria-pressed="true"]:not(:disabled) {
+      background-color: #73716D !important;
+      color: #FFFFFF !important;
+      border-color: #73716D !important;
+    }
+    .psq-btn:focus-visible {
+      outline: 2px solid #73716D;
+      outline-offset: 2px;
+    }
+    .psq-btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+  </style>
+  <script crossorigin src="https://cdn.jsdelivr.net/npm/react@18.3.1/umd/react.production.min.js"></script>
+  <script crossorigin src="https://cdn.jsdelivr.net/npm/react-dom@18.3.1/umd/react-dom.production.min.js"></script>
+<script src="/_aistudio-iframe.js?v=29045eb3"></script></head>
+<body class="bg-[#F8FAFC] text-slate-900 antialiased selection:bg-[#71B94D]/20 selection:text-slate-900 min-h-screen">
+  <div id="root"></div>
+
+  <script>
+    const { useState, useEffect, useCallback, useMemo, useRef } = React;
+    const h = React.createElement;
+
+    /* ==========================================================================
+       SVG ICONS & INLINE BRAND ASSETS (ZERO EXTERNAL IMAGE DEPENDENCIES)
+       ========================================================================== */
+    const ParentSquareLogo = ({ className = 'h-7 md:h-8 w-auto' }) => h('svg', {
+      width: 185,
+      height: 29,
+      viewBox: '0 0 231 36',
+      fill: 'none',
+      xmlns: 'http://www.w3.org/2000/svg',
+      className
+    }, [
+      h('mask', { id: 'psq-mask-full', key: 'mask', maskUnits: 'userSpaceOnUse', x: 0, y: 0, width: 36, height: 36 },
+        h('path', { d: 'M35.514 0H0v35.514h35.514V0Z', fill: '#fff' })
+      ),
+      h('g', { mask: 'url(#psq-mask-full)', key: 'quads' }, [
+        h('path', { key: 'q1', d: 'M15.778 1.936c0-.676-.01-1.322-.033-1.936C3.833.33.326 3.84.001 15.761c.61.022 1.249.032 1.917.032 1.432 0 2.726-.047 3.893-.152 6.7-.601 9.216-3.122 9.814-9.83h.004c.103-1.162.15-2.45.15-3.877v.002Z', fill: '#68E246' }),
+        h('path', { key: 'q2', d: 'M19.737 1.936c0-.676.011-1.32.034-1.936C31.683.33 35.19 3.84 35.515 15.761c-.61.022-1.249.032-1.917.032-1.432 0-2.726-.047-3.894-.152-6.699-.601-9.215-3.122-9.813-9.83h-.004a44.022 44.022 0 0 1-.15-3.877v.002Z', fill: '#10A3FF' }),
+        h('path', { key: 'q3', d: 'M19.737 33.576c0 .675.011 1.32.034 1.935 11.912-.329 15.419-3.84 15.744-15.76-.61-.023-1.249-.032-1.917-.032-1.432 0-2.726.046-3.894.151-6.699.602-9.215 3.122-9.813 9.83h-.004a44.022 44.022 0 0 0-.15 3.878v-.002Z', fill: '#FFB82A' }),
+        h('path', { key: 'q4', d: 'M15.777 33.576c0 .675-.011 1.32-.033 1.935-11.912-.329-15.42-3.84-15.745-15.76.61-.023 1.25-.032 1.917-.032 1.433 0 2.726.046 3.894.151 6.699.602 9.216 3.122 9.814 9.83h.003c.104 1.163.15 2.45.15 3.878v-.002Z', fill: '#FC57E5' })
+      ]),
+      h('path', {
+        key: 'wordmark',
+        d: 'M46.558 7.754h8.764c1.5 0 2.828.296 3.983.888 1.154.592 2.046 1.421 2.68 2.487.63 1.066.947 2.25.947 3.553s-.311 2.502-.933 3.539c-.622 1.036-1.51 1.846-2.665 2.428-1.155.582-2.492.873-4.012.873h-4.53v6.958h-4.234V7.754Zm10.452 9.608a2.805 2.805 0 0 0 1.14-1.11c.266-.474.4-1.007.4-1.6 0-.591-.134-1.154-.4-1.628a2.804 2.804 0 0 0-1.14-1.11c-.494-.266-1.057-.4-1.688-.4h-4.53v6.248h4.53c.631 0 1.194-.134 1.688-.4ZM75.279 14.416c-1.205-1.006-2.774-1.51-4.708-1.51-1.264 0-2.389.207-3.375.622-.987.415-1.777.977-2.369 1.688a4.842 4.842 0 0 0-1.096 2.398l3.968.888c.137-.73.46-1.297.962-1.702.504-.404 1.15-.607 1.94-.607.73 0 1.327.168 1.791.503.463.335.696.78.696 1.333 0 .396-.113.686-.34.873-.228.187-.587.302-1.081.34l-2.487.237c-1.679.158-3.08.622-4.205 1.392-1.125.77-1.688 1.945-1.688 3.524 0 .888.217 1.663.652 2.324a4.255 4.255 0 0 0 1.776 1.525c.75.355 1.6.533 2.547.533 1.105 0 2.106-.232 3.005-.696a5.652 5.652 0 0 0 1.821-1.455v1.855h3.997v-9.653c0-1.934-.601-3.405-1.806-4.412Zm-2.724 9.372a4.04 4.04 0 0 1-1.421 1.317 3.774 3.774 0 0 1-1.895.503c-.613 0-1.092-.138-1.436-.414-.346-.276-.518-.651-.518-1.125 0-.433.162-.794.488-1.08.326-.286.785-.47 1.377-.549l2.576-.296c.513-.059.894-.138 1.14-.237a.966.966 0 0 0 .222-.127v.305c0 .592-.178 1.16-.533 1.703ZM86.678 13.054a5.347 5.347 0 0 0-2.25 1.154 5.953 5.953 0 0 0-.918.98v-1.986h-3.997V28.48h3.997v-8.557c0-.868.252-1.599.755-2.191.503-.592 1.194-.966 2.073-1.125.879-.158 1.84-.06 2.887.296v-3.76c-.87-.256-1.718-.286-2.547-.09ZM104.725 17.6a7.626 7.626 0 0 0-2.887-3.42c-1.303-.848-2.792-1.274-4.47-1.274-1.502 0-2.864.352-4.087 1.051a7.668 7.668 0 0 0-2.887 2.872c-.701 1.214-1.05 2.552-1.05 4.012 0 1.46.358 2.828 1.08 4.042a7.72 7.72 0 0 0 2.946 2.857c1.243.693 2.624 1.037 4.145 1.037 1.6 0 3.02-.37 4.264-1.11a8.071 8.071 0 0 0 2.931-2.976l-3.286-1.48a4.14 4.14 0 0 1-1.555 1.583c-.66.385-1.406.578-2.235.578-.83 0-1.61-.198-2.28-.593a4.039 4.039 0 0 1-1.555-1.628 4.613 4.613 0 0 1-.355-.888h11.799c.276-1.679.104-3.233-.518-4.664Zm-9.46-.682a3.96 3.96 0 0 1 2.102-.577c.77 0 1.457.177 2.058.533.601.355 1.081.85 1.436 1.48.152.272.274.56.368.859h-7.72a4.95 4.95 0 0 1 .275-.666c.356-.702.848-1.244 1.48-1.629ZM121.824 15.97a5.632 5.632 0 0 0-2.176-2.25c-.938-.542-2.01-.814-3.213-.814-1.203 0-2.28.296-3.227.888-.607.38-1.12.84-1.54 1.381v-1.973h-3.997v15.279h3.997v-8.557c0-.652.152-1.235.459-1.747.305-.513.72-.913 1.244-1.2a3.618 3.618 0 0 1 1.761-.429c.691 0 1.298.145 1.821.43.522.286.928.686 1.214 1.199.285.512.43 1.095.43 1.747v8.557h3.997v-9.268c0-1.203-.257-2.284-.77-3.242ZM123.394 13.203h3.079V9.997l3.997-1.243v4.449h3.968v3.523h-3.968v6.07c0 .75.172 1.297.518 1.643.345.346.894.518 1.644.518h1.806v3.524h-1.806c-2.093 0-3.642-.489-4.649-1.466-1.007-.977-1.51-2.461-1.51-4.456v-5.833h-3.079v-3.523ZM141.943 24.349c.661.524 1.564.785 2.709.785.67 0 1.268-.108 1.792-.326.523-.217.927-.509 1.213-.874a1.95 1.95 0 0 0 .43-1.228c0-.533-.183-.966-.548-1.303-.366-.335-.825-.607-1.377-.814-.553-.208-1.323-.439-2.309-.696-1.442-.374-2.63-.755-3.568-1.14a6 6 0 0 1-2.413-1.821c-.672-.83-1.007-1.943-1.007-3.346 0-1.144.335-2.185 1.007-3.124.67-.936 1.587-1.673 2.753-2.206 1.164-.532 2.449-.799 3.85-.799 1.4 0 2.694.246 3.819.74s2.028 1.175 2.709 2.043a6.14 6.14 0 0 1 1.259 2.99l-4.264.86c-.157-.91-.557-1.635-1.199-2.177s-1.466-.814-2.473-.814c-.612 0-1.149.1-1.613.296-.465.198-.826.465-1.081.8-.257.336-.385.72-.385 1.154 0 .494.172.898.518 1.214.346.317.785.568 1.318.755.533.187 1.273.41 2.221.666 1.48.376 2.694.765 3.641 1.17.948.405 1.766 1.042 2.458 1.91.69.87 1.036 2.043 1.036 3.523a5.195 5.195 0 0 1-1.036 3.154c-.692.938-1.64 1.678-2.842 2.22-1.205.543-2.547.815-4.027.815-2.23 0-4.077-.522-5.537-1.57-1.46-1.045-2.33-2.448-2.606-4.204l4.264-.859c.198.948.625 1.684 1.288 2.206ZM166.326 13.202v1.812a6.645 6.645 0 0 0-1.243-1.071c-1.046-.69-2.251-1.037-3.613-1.037a6.925 6.925 0 0 0-3.73 1.051c-1.125.702-2.008 1.659-2.65 2.872-.642 1.214-.963 2.552-.963 4.012 0 1.46.321 2.828.963 4.042.642 1.214 1.525 2.167 2.65 2.857 1.125.693 2.368 1.037 3.73 1.037s2.567-.345 3.613-1.037a6.563 6.563 0 0 0 1.243-1.07v7.732h3.998v-21.2h-3.998Zm-.533 9.816c-.355.66-.84 1.18-1.45 1.554a3.832 3.832 0 0 1-2.043.563c-.75 0-1.457-.187-2.058-.563a4.024 4.024 0 0 1-1.436-1.554 4.513 4.513 0 0 1-.533-2.177c0-.79.177-1.51.533-2.161a4.035 4.035 0 0 1 1.45-1.54 3.85 3.85 0 0 1 2.044-.562c.749 0 1.456.189 2.057.562a4.076 4.076 0 0 1 1.436 1.54c.356.651.533 1.373.533 2.162 0 .788-.177 1.515-.533 2.176ZM176.749 13.2v8.823c0 .612.133 1.154.4 1.628.266.474.642.84 1.125 1.096.483.257 1.031.385 1.643.385.613 0 1.16-.128 1.643-.385a2.736 2.736 0 0 0 1.126-1.096c.266-.474.399-1.016.399-1.628v-8.824h3.998v8.824c0 1.323-.308 2.492-.918 3.508a6.379 6.379 0 0 1-2.547 2.384c-1.086.572-2.318.858-3.701.858-1.382 0-2.611-.28-3.686-.843a6.375 6.375 0 0 1-2.547-2.384c-.621-1.025-.932-2.2-.932-3.523v-8.824h3.997ZM200.907 14.416c-1.205-1.006-2.774-1.51-4.708-1.51-1.264 0-2.389.207-3.375.622-.987.415-1.777.977-2.369 1.688a4.862 4.862 0 0 0-1.096 2.398l3.968.888c.139-.73.459-1.297.962-1.702.504-.404 1.15-.607 1.94-.607.729 0 1.327.168 1.791.503.463.335.696.78.696 1.333 0 .396-.115.686-.341.873-.227.187-.586.302-1.08.34l-2.488.237c-1.678.158-3.079.622-4.204 1.392-1.125.77-1.688 1.945-1.688 3.524 0 .888.217 1.663.652 2.324a4.243 4.243 0 0 0 1.776 1.525c.75.355 1.599.533 2.547.533 1.104 0 2.107-.232 3.005-.696a5.663 5.663 0 0 0 1.821-1.455v1.855h3.997v-9.653c0-1.934-.603-3.405-1.806-4.412Zm-2.724 9.372a4.038 4.038 0 0 1-1.421 1.317 3.776 3.776 0 0 1-1.895.503c-.613 0-1.09-.138-1.436-.414-.346-.276-.518-.651-.518-1.125 0-.433.162-.794.488-1.08.326-.286.785-.47 1.377-.549l2.576-.296c.512-.059.892-.138 1.14-.237a.978.978 0 0 0 .222-.127v.305c0 .592-.178 1.16-.533 1.703ZM212.307 13.054a5.337 5.337 0 0 0-2.25 1.154 5.98 5.98 0 0 0-.918.98v-1.986h-3.997V28.48h3.997v-8.557c0-.868.252-1.599.755-2.191.504-.592 1.194-.966 2.073-1.125.879-.158 1.841-.06 2.887.296v-3.76c-.87-.256-1.718-.286-2.547-.09ZM230.354 17.6a7.626 7.626 0 0 0-2.887-3.42c-1.302-.848-2.792-1.274-4.471-1.274-1.5 0-2.862.352-4.086 1.051a7.7 7.7 0 0 0-2.887 2.872c-.701 1.214-1.051 2.552-1.051 4.012 0 1.46.359 2.828 1.081 4.042a7.725 7.725 0 0 0 2.946 2.857c1.244.693 2.624 1.037 4.145 1.037 1.599 0 3.021-.37 4.264-1.11a8.063 8.063 0 0 0 2.931-2.976l-3.286-1.48a4.139 4.139 0 0 1-1.555 1.583c-.662.385-1.406.578-2.235.578s-1.61-.198-2.28-.593a4.033 4.033 0 0 1-1.554-1.628 4.622 4.622 0 0 1-.356-.888h11.799c.276-1.679.104-3.233-.518-4.664Zm-9.46-.682a3.96 3.96 0 0 1 2.102-.577c.77 0 1.457.177 2.058.533.602.355 1.081.85 1.436 1.48.152.272.274.56.369.859h-7.721c.076-.228.167-.45.276-.666.355-.702.847-1.244 1.48-1.629Z',
+        fill: '#0f172a'
+      })
+    ]);
+
+    const Icon = ({ path, className = "w-4 h-4", viewBox = "0 0 24 24", fill = "none", stroke = "currentColor", strokeWidth = "2" }) =>
+      h('svg', { xmlns: "http://www.w3.org/2000/svg", viewBox, fill, stroke, strokeWidth, strokeLinecap: "round", strokeLinejoin: "round", className }, path);
+
+    const CopyIcon = ({ className }) => Icon({ className, path: [h('rect', { key: 'r', width: "14", height: "14", x: "8", y: "8", rx: "2", ry: "2" }), h('path', { key: 'p', d: "M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2" })] });
+    const CheckIcon = ({ className }) => Icon({ className, strokeWidth: "2.5", path: h('polyline', { points: "20 6 9 17 4 12" }) });
+    const RefreshIcon = ({ className }) => Icon({ className, path: [h('path', { key: 'p1', d: "M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8" }), h('path', { key: 'p2', d: "M21 3v5h-5" }), h('path', { key: 'p3', d: "M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16" }), h('path', { key: 'p4', d: "M8 16H3v5" })] });
+    const SparklesIcon = ({ className }) => Icon({ className, path: h('path', { d: "m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z" }) });
+    const PlusIcon = ({ className }) => Icon({ className, path: [h('path', { key: 'p1', d: "M5 12h14" }), h('path', { key: 'p2', d: "M12 5v14" })] });
+    const XIcon = ({ className }) => Icon({ className, path: [h('path', { key: 'p1', d: "M18 6 6 18" }), h('path', { key: 'p2', d: "m6 6 12 12" })] });
+    const LockIcon = ({ className }) => Icon({ className, path: [h('rect', { key: 'r', width: "18", height: "11", x: "3", y: "11", rx: "2", ry: "2" }), h('path', { key: 'p', d: "M7 11V7a5 5 0 0 1 10 0v4" })] });
+    const UnlockIcon = ({ className }) => Icon({ className, path: [h('rect', { key: 'r', width: "18", height: "11", x: "3", y: "11", rx: "2", ry: "2" }), h('path', { key: 'p', d: "M7 11V7a5 5 0 0 1 9.9-1" })] });
+    const ShieldCheckIcon = ({ className }) => Icon({ className, path: [h('path', { key: 'p1', d: "M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z" }), h('path', { key: 'p2', d: "m9 12 2 2 4-4" })] });
+    const DownloadIcon = ({ className }) => Icon({ className, path: [h('path', { key: 'p1', d: "M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" }), h('polyline', { key: 'p2', points: "7 10 12 15 17 10" }), h('line', { key: 'p3', x1: "12", x2: "12", y1: "15", y2: "3" })] });
+    const ImageIcon = ({ className }) => Icon({ className, path: [h('rect', { key: 'r', width: "18", height: "18", x: "3", y: "3", rx: "2", ry: "2" }), h('circle', { key: 'c', cx: "9", cy: "9", r: "2" }), h('path', { key: 'p', d: "m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21" })] });
+    const UploadIcon = ({ className }) => Icon({ className, path: [h('path', { key: 'p1', d: "M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" }), h('polyline', { key: 'p2', points: "17 8 12 3 7 8" }), h('line', { key: 'p3', x1: "12", x2: "12", y1: "3", y2: "15" })] });
+    const SlidersIcon = ({ className }) => Icon({ className, path: [h('line', { key: 'l1', x1: "4", x2: "4", y1: "21", y2: "14" }), h('line', { key: 'l2', x1: "4", x2: "4", y1: "10", y2: "3" }), h('line', { key: 'l3', x1: "12", x2: "12", y1: "21", y2: "12" }), h('line', { key: 'l4', x1: "12", x2: "12", y1: "8", y2: "3" }), h('line', { key: 'l5', x1: "20", x2: "20", y1: "21", y2: "16" }), h('line', { key: 'l6', x1: "20", x2: "20", y1: "12", y2: "3" }), h('line', { key: 'l7', x1: "2", x2: "6", y1: "14", y2: "14" }), h('line', { key: 'l8', x1: "10", x2: "14", y1: "8", y2: "8" }), h('line', { key: 'l9', x1: "18", x2: "22", y1: "16", y2: "16" })] });
+
+    /* ==========================================================================
+       COLOR CONSTANTS & MATHEMATICAL WCAG / WEB-SAFE UTILITIES
+       ========================================================================== */
+    const WEB_SAFE_STEPS = [0x00, 0x33, 0x66, 0x99, 0xCC, 0xFF];
+
+    const isValidHex = (hex) => /^#[0-9A-F]{6}$/i.test((hex || '').trim());
+
+    const normalizeHex = (hex) => {
+      let clean = (hex || '').trim().replace('#', '');
+      if (clean.length === 3) clean = clean.split('').map(c => c + c).join('');
+      return `#${clean.toUpperCase()}`;
+    };
+
+    const hexToRgb = (hex) => {
+      const norm = normalizeHex(hex);
+      const num = parseInt(norm.slice(1), 16);
+      return { r: (num >> 16) & 255, g: (num >> 8) & 255, b: num & 255 };
+    };
+
+    const rgbToHex = (r, g, b) => {
+      const clamp = (v) => Math.max(0, Math.min(255, Math.round(v)));
+      const toHex = (v) => clamp(v).toString(16).padStart(2, '0').toUpperCase();
+      return `#${toHex(r)}${toHex(g)}${toHex(b)}`;
+    };
+
+    const rgbToCmyk = (r, g, b) => {
+      const rNorm = Math.max(0, Math.min(255, r)) / 255;
+      const gNorm = Math.max(0, Math.min(255, g)) / 255;
+      const bNorm = Math.max(0, Math.min(255, b)) / 255;
+      const k = 1 - Math.max(rNorm, gNorm, bNorm);
+      if (k >= 1) return { c: 0, m: 0, y: 0, k: 100 };
+      return {
+        c: Math.round(((1 - rNorm - k) / (1 - k)) * 100),
+        m: Math.round(((1 - gNorm - k) / (1 - k)) * 100),
+        y: Math.round(((1 - bNorm - k) / (1 - k)) * 100),
+        k: Math.round(k * 100)
+      };
+    };
+
+    const cmykToRgb = (c, m, y, k) => {
+      const cN = Math.max(0, Math.min(100, c)) / 100;
+      const mN = Math.max(0, Math.min(100, m)) / 100;
+      const yN = Math.max(0, Math.min(100, y)) / 100;
+      const kN = Math.max(0, Math.min(100, k)) / 100;
+      return {
+        r: Math.round(255 * (1 - cN) * (1 - kN)),
+        g: Math.round(255 * (1 - mN) * (1 - kN)),
+        b: Math.round(255 * (1 - yN) * (1 - kN))
+      };
+    };
+
+    const cmykToHex = (c, m, y, k) => {
+      const { r, g, b } = cmykToRgb(c, m, y, k);
+      return rgbToHex(r, g, b);
+    };
+
+    const parseFlexibleColorInput = (rawInput) => {
+      const trimmed = (rawInput || '').trim();
+      if (!trimmed) return null;
+
+      const hexCandidate = trimmed.startsWith('#') ? trimmed : `#${trimmed}`;
+      if (/^#([0-9A-F]{3}|[0-9A-F]{6})$/i.test(hexCandidate)) {
+        return normalizeHex(hexCandidate);
+      }
+
+      const rgbMatch = trimmed.match(/^(?:rgb\s*\(\s*)?(\d{1,3})\s*[,\s]\s*(\d{1,3})\s*[,\s]\s*(\d{1,3})\s*\)?$/i);
+      if (rgbMatch) {
+        const r = Number(rgbMatch[1]), g = Number(rgbMatch[2]), b = Number(rgbMatch[3]);
+        if (r >= 0 && r <= 255 && g >= 0 && g <= 255 && b >= 0 && b <= 255) {
+          return rgbToHex(r, g, b);
+        }
+        return null;
+      }
+
+      const cmykMatch = trimmed.match(/^(?:cmyk\s*\(\s*)?(\d{1,3}(?:\.\d+)?)\s*%?\s*[,\s]\s*(\d{1,3}(?:\.\d+)?)\s*%?\s*[,\s]\s*(\d{1,3}(?:\.\d+)?)\s*%?\s*[,\s]\s*(\d{1,3}(?:\.\d+)?)\s*%?\s*\)?$/i);
+      if (cmykMatch) {
+        const c = Number(cmykMatch[1]), m = Number(cmykMatch[2]), y = Number(cmykMatch[3]), k = Number(cmykMatch[4]);
+        if (c >= 0 && c <= 100 && m >= 0 && m <= 100 && y >= 0 && y <= 100 && k >= 0 && k <= 100) {
+          return cmykToHex(c, m, y, k);
+        }
+      }
+      return null;
+    };
+
+    const hexToHsl = (hex) => {
+      const { r, g, b } = hexToRgb(hex);
+      const rN = r / 255, gN = g / 255, bN = b / 255;
+      const max = Math.max(rN, gN, bN), min = Math.min(rN, gN, bN);
+      let hVal = 0, s = 0;
+      const l = (max + min) / 2;
+      if (max !== min) {
+        const d = max - min;
+        s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
+        switch (max) {
+          case rN: hVal = (gN - bN) / d + (gN < bN ? 6 : 0); break;
+          case gN: hVal = (bN - rN) / d + 2; break;
+          case bN: hVal = (rN - gN) / d + 4; break;
+        }
+        hVal = Math.round(hVal * 60);
+      }
+      return { h: hVal, s: Math.round(s * 100), l: Math.round(l * 100) };
+    };
+
+    const hslToRgb = (hVal, s, l) => {
+      const hNorm = ((((hVal % 360) + 360) % 360) / 360);
+      const sNorm = Math.max(0, Math.min(100, s)) / 100;
+      const lNorm = Math.max(0, Math.min(100, l)) / 100;
+      if (sNorm === 0) {
+        const val = Math.round(lNorm * 255);
+        return { r: val, g: val, b: val };
+      }
+      const hue2rgb = (p, q, t) => {
+        let tN = t;
+        if (tN < 0) tN += 1;
+        if (tN > 1) tN -= 1;
+        if (tN < 1/6) return p + (q - p) * 6 * tN;
+        if (tN < 1/2) return q;
+        if (tN < 2/3) return p + (q - p) * (2/3 - tN) * 6;
+        return p;
+      };
+      const q = lNorm < 0.5 ? lNorm * (1 + sNorm) : lNorm + sNorm - lNorm * sNorm;
+      const p = 2 * lNorm - q;
+      return {
+        r: Math.round(hue2rgb(p, q, hNorm + 1/3) * 255),
+        g: Math.round(hue2rgb(p, q, hNorm) * 255),
+        b: Math.round(hue2rgb(p, q, hNorm - 1/3) * 255)
+      };
+    };
+
+    const hslToHex = (hVal, s, l) => {
+      const { r, g, b } = hslToRgb(hVal, s, l);
+      return rgbToHex(r, g, b);
+    };
+
+    const getNearestWebSafe = (hex) => {
+      if (!isValidHex(hex)) return '#000000';
+      const { r, g, b } = hexToRgb(hex);
+      const snap = (val) => WEB_SAFE_STEPS.reduce((prev, curr) => Math.abs(curr - val) < Math.abs(prev - val) ? curr : prev);
+      return rgbToHex(snap(r), snap(g), snap(b));
+    };
+
+    const isWebSafe = (hex) => {
+      if (!isValidHex(hex)) return false;
+      const { r, g, b } = hexToRgb(hex);
+      return WEB_SAFE_STEPS.includes(r) && WEB_SAFE_STEPS.includes(g) && WEB_SAFE_STEPS.includes(b);
+    };
+
+    const getRelativeLuminance = (hex) => {
+      const { r, g, b } = hexToRgb(hex);
+      const [rs, gs, bs] = [r, g, b].map(v => {
+        const c = v / 255;
+        return c <= 0.03928 ? c / 12.92 : Math.pow((c + 0.055) / 1.055, 2.4);
+      });
+      return 0.2126 * rs + 0.7152 * gs + 0.0722 * bs;
+    };
+
+    const getContrastRatio = (hex1, hex2) => {
+      const l1 = getRelativeLuminance(hex1);
+      const l2 = getRelativeLuminance(hex2);
+      const lighter = Math.max(l1, l2);
+      const darker = Math.min(l1, l2);
+      return Math.round(((lighter + 0.05) / (darker + 0.05)) * 100) / 100;
+    };
+
+    const getContrastColor = (hex) => {
+      const whiteContrast = getContrastRatio(hex, '#FFFFFF');
+      const blackContrast = getContrastRatio(hex, '#000000');
+      return whiteContrast >= blackContrast ? '#FFFFFF' : '#000000';
+    };
+
+    const getWcagStatus = (color1, color2) => {
+      const ratio = getContrastRatio(color1, color2);
+      return {
+        ratio,
+        smallText: { aa: ratio >= 4.5, aaa: ratio >= 7.0 },
+        largeText: { aa: ratio >= 3.0, aaa: ratio >= 4.5 }
+      };
+    };
+
+    const getColorAccessibility = (hex) => ({
+      onWhite: getWcagStatus(hex, '#FFFFFF'),
+      onBlack: getWcagStatus(hex, '#000000')
+    });
+
+    const adjustColorLightness = (hex, lightness) => {
+      const hsl = hexToHsl(hex);
+      const clampedL = Math.max(0, Math.min(100, Math.round(lightness)));
+      return hslToHex(hsl.h, hsl.s, clampedL);
+    };
+
+    const adjustColorHsl = (hex, params) => {
+      const hsl = hexToHsl(hex);
+      const hVal = params.h !== undefined ? ((params.h % 360) + 360) % 360 : hsl.h;
+      const s = params.s !== undefined ? Math.max(0, Math.min(100, params.s)) : hsl.s;
+      const l = params.l !== undefined ? Math.max(0, Math.min(100, params.l)) : hsl.l;
+      return hslToHex(hVal, s, l);
+    };
+
+    const findPassingLightness = (colorToAdjustHex, referenceHex, targetRatio) => {
+      const { h: hue, s, l: originalL } = hexToHsl(colorToAdjustHex);
+      let best = null;
+      for (let candidateL = 0; candidateL <= 100; candidateL++) {
+        const candidateHex = hslToHex(hue, s, candidateL);
+        const ratio = getContrastRatio(candidateHex, referenceHex);
+        if (ratio >= targetRatio) {
+          const delta = Math.abs(candidateL - originalL);
+          if (!best || delta < best.delta) {
+            best = { hex: candidateHex, lightness: candidateL, ratio, delta };
+          }
+        }
+      }
+      return best ? { hex: best.hex, lightness: best.lightness, ratio: best.ratio } : null;
+    };
+
+    const getColorName = (hVal, s, l) => {
+      if (s < 12) {
+        if (l > 92) return 'Chalk Mist';
+        if (l > 82) return 'Soft Platinum';
+        if (l > 65) return 'Muted Silver';
+        if (l > 45) return 'Slate Neutral';
+        if (l > 25) return 'Graphite Gray';
+        return 'Obsidian Charcoal';
+      }
+      let prefix = '';
+      if (l > 82) prefix = 'Pale ';
+      else if (l > 70) prefix = 'Soft ';
+      else if (l < 25) prefix = 'Deep ';
+      else if (l < 35) prefix = 'Dark ';
+      else if (s > 85) prefix = 'Vivid ';
+
+      let base = 'Tone';
+      const normH = ((hVal % 360) + 360) % 360;
+      if (normH < 15) base = 'Crimson';
+      else if (normH < 30) base = 'Coral Ember';
+      else if (normH < 45) base = 'Tangerine';
+      else if (normH < 60) base = 'Warm Gold';
+      else if (normH < 75) base = 'Canary Yellow';
+      else if (normH < 95) base = 'Chartreuse';
+      else if (normH < 140) base = 'Emerald Green';
+      else if (normH < 165) base = 'Fresh Mint';
+      else if (normH < 190) base = 'Aqua Teal';
+      else if (normH < 210) base = 'Sky Cyan';
+      else if (normH < 235) base = 'Cobalt Blue';
+      else if (normH < 260) base = 'Electric Indigo';
+      else if (normH < 285) base = 'Royal Violet';
+      else if (normH < 315) base = 'Orchid Purple';
+      else if (normH < 340) base = 'Magenta Pink';
+      else base = 'Rose Scarlet';
+      return `${prefix}${base}`.trim();
+    };
+
+    const getColorRole = (index, count, l, s) => {
+      if (index === 0) return 'Primary Brand Action (CTA)';
+      if (l > 88) return 'Light Surface & Card Canvas';
+      if (l < 22) return 'Dark Mode Canvas & Typography';
+      if (s > 80 && l >= 40 && l <= 65) return 'Interactive Accent & Highlights';
+      if (s < 20) return 'Dividers, Borders & Muted Labels';
+      if (index === 1) return 'Secondary Interactive Element';
+      if (index === 2) return 'Supporting Harmony Tone';
+      return 'Coordinating Accent';
+    };
+
+    const buildColorData = (hex, name, usage, isLocked = false, strictWebSafe = false) => {
+      const targetHex = strictWebSafe ? getNearestWebSafe(hex) : normalizeHex(hex);
+      const { h: hue, s, l } = hexToHsl(targetHex);
+      const colorName = name || getColorName(hue, s, l);
+      const colorUsage = usage || getColorRole(0, 5, l, s);
+      const cWhite = getContrastRatio(targetHex, '#FFFFFF');
+      const cBlack = getContrastRatio(targetHex, '#000000');
+
+      return {
+        hex: targetHex.toUpperCase(),
+        name: colorName,
+        usage: colorUsage,
+        webSafeHex: getNearestWebSafe(targetHex),
+        isWebSafe: isWebSafe(targetHex),
+        contrastWhite: cWhite,
+        contrastBlack: cBlack,
+        accessibility: getColorAccessibility(targetHex),
+        textColor: getContrastColor(targetHex),
+        isLocked
+      };
+    };
+
+    const STARTER_PRESETS = [
+      { name: 'ParentSquare Brand', description: 'Official ParentSquare action green, warm neutral, and four-quadrant brand accents', colors: ['#71B94D', '#10A3FF', '#FFB82A', '#FC57E5', '#73716D'] },
+      { name: 'Electric Indigo & Coral', description: 'Dynamic duo of vivid indigo and radiant coral', colors: ['#4F46E5', '#F43F5E'] },
+      { name: 'Emerald & Warm Gold', description: 'Natural botanical green with sunny golden amber', colors: ['#059669', '#D97706'] },
+      { name: 'Cyber Cyan & Magenta', description: 'High-energy futuristic palette', colors: ['#06B6D4', '#EC4899', '#8B5CF6'] },
+      { name: 'Nordic Slate & Marine', description: 'Clean Scandinavian tech aesthetic', colors: ['#0F172A', '#0284C7', '#F59E0B'] },
+      { name: 'Modern 4-Tone Harmony', description: 'Balanced primary blue, fresh mint, sunny amber, and crimson', colors: ['#2563EB', '#10B981', '#F59E0B', '#EF4444'] },
+      { name: 'Sunset Twilight', description: 'Warm gradient of violet, magenta, and apricot', colors: ['#7C3AED', '#DB2777', '#EA580C', '#F59E0B'] }
+    ];
+
+    const HARMONY_THEORIES = [
+      { id: 'Vibrant Modern', name: 'Vibrant Modern', desc: 'Strict: Electrifying, high-saturation (85-100%) modern digital tech tones.' },
+      { id: 'High Contrast WCAG', name: 'High Contrast WCAG', desc: 'Strict: Maximized luminance variance for WCAG AAA (>7:1 contrast ratio).' },
+      { id: 'Complementary', name: 'Complementary', desc: 'Strict: High-contrast polarity with opposite pole (+180°) & split-complements.' },
+      { id: 'Analogous', name: 'Analogous', desc: 'Strict: Harmonious gradient flow within a narrow ±45° arc around starting color.' },
+      { id: 'Monochromatic', name: 'Monochromatic', desc: 'Strict: Pure tints & shades sharing the exact same starting color hue (15% to 95% lightness).' },
+      { id: 'Triadic Harmony', name: 'Triadic Harmony', desc: 'Strict: Balanced 3-way triangular split spaced 120° apart on the color wheel.' },
+      { id: 'Warm & Earthy', name: 'Warm & Earthy', desc: 'Strict: Natural terracotta, burnt sienna, golden amber, sand, and olive.' },
+      { id: 'Cool & Marine', name: 'Cool & Marine', desc: 'Strict: Oceanic deep navy abyss, marine cobalt, cyan, and glacial ice.' },
+      { id: 'Soft Pastel', name: 'Soft Pastel', desc: 'Strict: Soft, confectionery tints with high lightness (75-92%) and gentle chroma.' },
+      { id: 'Clean Minimalist', name: 'Clean Minimalist', desc: 'Strict: Architectural graphite, slate, and chalk neutrals with starting color accents.' }
+    ];
+
+    /* ==========================================================================
+       MATHEMATICAL COLOR HARMONY ENGINE (MATCHES utils/colorHarmonies.ts)
+       ========================================================================== */
+    const generateHarmonicPalette = (count, style, seedColors = [], strictWebSafe = true, lockedColors = []) => {
+      const safeCount = Math.min(10, Math.max(2, count));
+      const validSeeds = seedColors.filter(isValidHex).slice(0, 6).map(normalizeHex);
+      const primaryHex = validSeeds[0] || '#4F46E5';
+      const primaryHsl = hexToHsl(primaryHex);
+
+      const hslPalette = [];
+      hslPalette.push({
+        ...primaryHsl,
+        name: validSeeds[0] ? `Color 1: ${getColorName(primaryHsl.h, primaryHsl.s, primaryHsl.l)}` : undefined,
+        usage: 'Primary Brand Anchor'
+      });
+
+      for (let i = 1; i < validSeeds.length && hslPalette.length < safeCount; i++) {
+        const sHsl = hexToHsl(validSeeds[i]);
+        hslPalette.push({
+          ...sHsl,
+          name: `Color ${i + 1}: ${getColorName(sHsl.h, sHsl.s, sHsl.l)}`,
+          usage: `Coordinating Color Accent ${i}`
+        });
+      }
+
+      const remainingSlots = safeCount - hslPalette.length;
+
+      switch (style) {
+        case 'Monochromatic': {
+          const baseHue = primaryHsl.h;
+          const baseSat = Math.max(30, primaryHsl.s);
+          const stops = [15, 26, 38, 52, 66, 78, 88, 94].filter(s => Math.abs(s - primaryHsl.l) > 7);
+          for (let i = 0; i < remainingSlots; i++) {
+            const lStop = stops[i % stops.length];
+            const sMod = lStop < 30 ? Math.max(20, baseSat - 15) : lStop > 85 ? Math.max(25, baseSat - 20) : baseSat;
+            hslPalette.push({
+              h: baseHue,
+              s: sMod,
+              l: lStop,
+              name: getColorName(baseHue, sMod, lStop),
+              usage: lStop > 85 ? 'Light Card Surface' : lStop < 30 ? 'Deep Canvas Anchor' : 'Monochromatic Tier'
+            });
+          }
+          break;
+        }
+        case 'Complementary': {
+          const compHue = (primaryHsl.h + 180) % 360;
+          const candidates = [
+            { h: compHue, s: Math.min(100, primaryHsl.s + 10), l: 50, usage: 'High-Contrast Complement (CTA)' },
+            { h: compHue, s: Math.max(40, primaryHsl.s), l: 22, usage: 'Deep Complementary Anchor' },
+            { h: compHue, s: Math.max(30, primaryHsl.s - 20), l: 88, usage: 'Subtle Complementary Tint' },
+            { h: primaryHsl.h, s: primaryHsl.s, l: 20, usage: 'Dark Primary Shade' },
+            { h: primaryHsl.h, s: Math.max(25, primaryHsl.s - 15), l: 92, usage: 'Light Primary Canvas' },
+            { h: (primaryHsl.h + 150) % 360, s: 80, l: 54, usage: 'Split-Complementary Accent' },
+            { h: (primaryHsl.h + 210) % 360, s: 75, l: 48, usage: 'Split-Complementary Secondary' },
+            { h: compHue, s: 95, l: 65, usage: 'Vivid Complementary Highlight' }
+          ];
+          for (let i = 0; i < remainingSlots; i++) {
+            const c = candidates[i % candidates.length];
+            hslPalette.push({ h: c.h, s: c.s, l: c.l, name: getColorName(c.h, c.s, c.l), usage: c.usage });
+          }
+          break;
+        }
+        case 'Analogous': {
+          const steps = [-45, 30, -25, 45, -60, 60, -15, 15];
+          for (let i = 0; i < remainingSlots; i++) {
+            const delta = steps[i % steps.length];
+            const hue = (primaryHsl.h + delta + 360) % 360;
+            const l = 35 + ((i * 14) % 55);
+            const s = Math.min(95, Math.max(45, primaryHsl.s + (i % 2 === 0 ? 10 : -10)));
+            hslPalette.push({ h: hue, s, l, name: getColorName(hue, s, l), usage: i % 2 === 0 ? 'Harmonious Flow Accent' : 'Adjacent Gradient Step' });
+          }
+          break;
+        }
+        case 'Triadic Harmony': {
+          const t1 = (primaryHsl.h + 120) % 360;
+          const t2 = (primaryHsl.h + 240) % 360;
+          const candidates = [
+            { h: t1, s: 85, l: 50, usage: 'Triadic Vertex 1 Accent' },
+            { h: t2, s: 85, l: 50, usage: 'Triadic Vertex 2 Accent' },
+            { h: t1, s: 60, l: 24, usage: 'Triadic Deep Anchor' },
+            { h: t2, s: 45, l: 90, usage: 'Triadic Soft Tint' },
+            { h: primaryHsl.h, s: 50, l: 18, usage: 'Deep Base Tone' },
+            { h: t1, s: 90, l: 68, usage: 'Triadic Bright Highlight' },
+            { h: t2, s: 75, l: 38, usage: 'Triadic Secondary Shade' }
+          ];
+          for (let i = 0; i < remainingSlots; i++) {
+            const c = candidates[i % candidates.length];
+            hslPalette.push({ h: c.h, s: c.s, l: c.l, name: getColorName(c.h, c.s, c.l), usage: c.usage });
+          }
+          break;
+        }
+        case 'High Contrast WCAG': {
+          const candidates = [
+            { h: (primaryHsl.h + 180) % 360, s: 95, l: 50, usage: 'High-Contrast Polar Accent' },
+            { h: 220, s: 40, l: 12, usage: 'Deep Contrast Black Anchor (AAA)' },
+            { h: primaryHsl.h, s: 20, l: 96, usage: 'High-Key Light Surface (AAA)' },
+            { h: (primaryHsl.h + 60) % 360, s: 100, l: 45, usage: 'Vivid Warning / Action' },
+            { h: 215, s: 30, l: 20, usage: 'Dark Mode Card Container' },
+            { h: (primaryHsl.h + 300) % 360, s: 90, l: 55, usage: 'Vibrant Feedback Tag' },
+            { h: 0, s: 0, l: 98, usage: 'Pure High-Luminance Ground' }
+          ];
+          for (let i = 0; i < remainingSlots; i++) {
+            const c = candidates[i % candidates.length];
+            hslPalette.push({ h: c.h, s: c.s, l: c.l, name: getColorName(c.h, c.s, c.l), usage: c.usage });
+          }
+          break;
+        }
+        case 'Warm & Earthy': {
+          const earth = [
+            { h: 22, s: 68, l: 42, name: 'Burnt Sienna', usage: 'Warm Earth Focus' },
+            { h: 38, s: 85, l: 52, name: 'Warm Amber Gold', usage: 'Radiant Sun Indicator' },
+            { h: 14, s: 62, l: 48, name: 'Terracotta Clay', usage: 'Natural Organic Accent' },
+            { h: 78, s: 42, l: 36, name: 'Deep Olive Leaf', usage: 'Botanical Herb Tone' },
+            { h: 28, s: 45, l: 18, name: 'Dark Roast Espresso', usage: 'Deep Earth Base' },
+            { h: 42, s: 35, l: 92, name: 'Warm Linen Sand', usage: 'Parchment Canvas' },
+            { h: 18, s: 75, l: 32, name: 'Rust Ochre', usage: 'Earth Contrast Highlight' }
+          ];
+          for (let i = 0; i < remainingSlots; i++) {
+            const e = earth[i % earth.length];
+            hslPalette.push({ h: e.h, s: e.s, l: e.l, name: e.name, usage: e.usage });
+          }
+          break;
+        }
+        case 'Cool & Marine': {
+          const marine = [
+            { h: 222, s: 75, l: 18, name: 'Midnight Abyss', usage: 'Deep Nautical Anchor' },
+            { h: 210, s: 85, l: 48, name: 'Marine Cobalt', usage: 'Primary Ocean CTA' },
+            { h: 188, s: 90, l: 46, name: 'Vivid Cyan Wave', usage: 'Interactive Surface Highlight' },
+            { h: 168, s: 70, l: 52, name: 'Seafoam Reef', usage: 'Positive Affirmation' },
+            { h: 198, s: 40, l: 92, name: 'Arctic Ice Mist', usage: 'Cool Tinted Canvas' },
+            { h: 235, s: 60, l: 30, name: 'Deep Sea Trench', usage: 'Secondary Dark Shade' },
+            { h: 178, s: 65, l: 75, name: 'Glacial Lagoon', usage: 'Soft Water Tint' }
+          ];
+          for (let i = 0; i < remainingSlots; i++) {
+            const m = marine[i % marine.length];
+            hslPalette.push({ h: m.h, s: m.s, l: m.l, name: m.name, usage: m.usage });
+          }
+          break;
+        }
+        case 'Soft Pastel': {
+          const shifts = [30, 60, 120, 180, 240, 300, 330];
+          for (let i = 0; i < remainingSlots; i++) {
+            const hue = (primaryHsl.h + shifts[i % shifts.length]) % 360;
+            const s = 45 + ((i * 7) % 25);
+            const l = 78 + ((i * 5) % 15);
+            hslPalette.push({ h: hue, s, l, name: getColorName(hue, s, l), usage: i === 0 ? 'Pastel Highlight Card' : 'Soft Tint Element' });
+          }
+          break;
+        }
+        case 'Clean Minimalist': {
+          const baseHue = primaryHsl.h;
+          const neutrals = [
+            { h: baseHue, s: 18, l: 14, name: 'Obsidian Slate', usage: 'Dark Mode Ground' },
+            { h: baseHue, s: 12, l: 26, name: 'Graphite Charcoal', usage: 'Header & Primary Text' },
+            { h: baseHue, s: 10, l: 48, name: 'Neutral Mid Slate', usage: 'Subheadings & Icons' },
+            { h: baseHue, s: 14, l: 82, name: 'Platinum Frost', usage: 'Divider & Border Tint' },
+            { h: baseHue, s: 20, l: 95, name: 'Chalk Canvas', usage: 'Light Mode Surface' },
+            { h: (baseHue + 180) % 360, s: 85, l: 52, name: 'Focal Pop Accent', usage: 'Single Focal Pop' },
+            { h: baseHue, s: 8, l: 65, name: 'Silver Mist', usage: 'Muted Supporting Label' }
+          ];
+          for (let i = 0; i < remainingSlots; i++) {
+            const n = neutrals[i % neutrals.length];
+            hslPalette.push({ h: n.h, s: n.s, l: n.l, name: n.name, usage: n.usage });
+          }
+          break;
+        }
+        default: {
+          const vibrantAngles = [
+            { angle: 35, s: 95, l: 52, usage: 'High-Energy Secondary CTA' },
+            { angle: 180, s: 90, l: 50, usage: 'Punchy Complementary Flash' },
+            { angle: 135, s: 85, l: 48, usage: 'Dynamic Accent Tag' },
+            { angle: 280, s: 90, l: 54, usage: 'Electric Violet Highlight' },
+            { angle: 0, s: 15, l: 12, usage: 'Deep Black Carbon Anchor' },
+            { angle: 215, s: 95, l: 58, usage: 'Radiant Marine Indicator' },
+            { angle: 0, s: 25, l: 96, usage: 'Ultra-Clean Canvas' }
+          ];
+          for (let i = 0; i < remainingSlots; i++) {
+            const v = vibrantAngles[i % vibrantAngles.length];
+            const hue = (primaryHsl.h + v.angle) % 360;
+            hslPalette.push({ h: hue, s: v.s, l: v.l, name: getColorName(hue, v.s, v.l), usage: v.usage });
+          }
+          break;
+        }
+      }
+
+      const finalColors = [];
+      for (let i = 0; i < safeCount; i++) {
+        const lockedMatch = lockedColors[i] && lockedColors[i].isLocked ? lockedColors[i] : null;
+        if (lockedMatch) {
+          finalColors.push(lockedMatch);
+        } else {
+          const item = hslPalette[i] || hslPalette[0];
+          const rawHex = hslToHex(item.h, item.s, item.l);
+          const hex = strictWebSafe ? getNearestWebSafe(rawHex) : rawHex;
+          finalColors.push(buildColorData(hex, item.name, item.usage, false, strictWebSafe));
+        }
+      }
+
+      return {
+        paletteName: `${style} Harmony`,
+        description: `A uniquely calibrated ${safeCount}-color palette generated from ${validSeeds.length || 1} starting ${validSeeds.length === 1 ? 'color' : 'colors'} strictly adhering to ${style} theory principles.`,
+        colors: finalColors,
+        harmonyType: style
+      };
+    };
+
+    /* ==========================================================================
+       IMAGE UPLOAD & PIXEL QUANTIZATION ENGINE
+       ========================================================================== */
+    const getRgbDistance = (a, b) => {
+      const dr = a.r - b.r;
+      const dg = a.g - b.g;
+      const db = a.b - b.b;
+      return Math.sqrt(2 * dr * dr + 4 * dg * dg + 3 * db * db);
+    };
+
+    const getSaturationRgb = (r, g, b) => {
+      const max = Math.max(r, g, b) / 255;
+      const min = Math.min(r, g, b) / 255;
+      if (max === min) return 0;
+      const l = (max + min) / 2;
+      const d = max - min;
+      return l > 0.5 ? d / (2 - max - min) : d / (max + min);
+    };
+
+    const extractColorsFromImageFile = (file, maxColors = 10) => new Promise((resolve, reject) => {
+      if (!file.type.startsWith('image/')) {
+        reject(new Error('Please upload a valid image file (PNG, JPG, WebP, GIF, or SVG).'));
+        return;
+      }
+      if (file.size > 15 * 1024 * 1024) {
+        reject(new Error('Image file must be under 15 MB.'));
+        return;
+      }
+      const reader = new FileReader();
+      reader.onload = () => {
+        const dataUrl = reader.result;
+        const img = new Image();
+        img.onload = () => {
+          const maxDim = 180;
+          const natW = img.naturalWidth || img.width || 160;
+          const natH = img.naturalHeight || img.height || 160;
+          const scale = Math.min(1, maxDim / Math.max(natW, natH));
+          const width = Math.max(1, Math.round(natW * scale));
+          const height = Math.max(1, Math.round(natH * scale));
+          const canvas = document.createElement('canvas');
+          canvas.width = width;
+          canvas.height = height;
+          const ctx = canvas.getContext('2d', { willReadFrequently: true });
+          if (!ctx) {
+            reject(new Error('Canvas 2D context unavailable.'));
+            return;
+          }
+          ctx.clearRect(0, 0, width, height);
+          ctx.drawImage(img, 0, 0, width, height);
+          const data = ctx.getImageData(0, 0, width, height).data;
+          const buckets = new Map();
+          const step = 14;
+          let opaque = 0;
+
+          for (let i = 0; i < data.length; i += 4) {
+            if (data[i + 3] < 128) continue;
+            const r = data[i], g = data[i + 1], b = data[i + 2];
+            opaque++;
+            const key = `${Math.round(r / step) * step},${Math.round(g / step) * step},${Math.round(b / step) * step}`;
+            const sat = getSaturationRgb(r, g, b);
+            const cur = buckets.get(key);
+            if (cur) {
+              cur.rSum += r; cur.gSum += g; cur.bSum += b; cur.count += 1; cur.satSum += sat;
+            } else {
+              buckets.set(key, { rSum: r, gSum: g, bSum: b, count: 1, satSum: sat });
+            }
+          }
+
+          if (opaque === 0 || buckets.size === 0) {
+            reject(new Error('No opaque pixels detected in this image.'));
+            return;
+          }
+
+          const candidates = Array.from(buckets.values()).map(bkt => {
+            const r = Math.round(bkt.rSum / bkt.count);
+            const g = Math.round(bkt.gSum / bkt.count);
+            const b = Math.round(bkt.bSum / bkt.count);
+            const avgSat = bkt.satSum / bkt.count;
+            const brightness = (r * 299 + g * 587 + b * 114) / 1000;
+            const isNearWhite = brightness > 246 && avgSat < 0.12;
+            const isNearBlack = brightness < 12 && avgSat < 0.15;
+            const score = bkt.count * (1 + avgSat * 2.8) * (isNearWhite ? 0.12 : isNearBlack ? 0.35 : 1);
+            return { r, g, b, score, hex: rgbToHex(r, g, b) };
+          }).sort((a, b) => b.score - a.score);
+
+          const selected = [];
+          for (const minDist of [85, 58, 36, 18]) {
+            for (const cand of candidates) {
+              if (selected.length >= maxColors) break;
+              if (!selected.some(s => getRgbDistance(s, cand) < minDist)) {
+                selected.push({ r: cand.r, g: cand.g, b: cand.b, hex: cand.hex });
+              }
+            }
+            if (selected.length >= maxColors) break;
+          }
+          if (selected.length === 0 && candidates.length > 0) {
+            selected.push(candidates[0]);
+          }
+          resolve({ previewUrl: dataUrl, fileName: file.name, colors: selected.map(c => c.hex) });
+        };
+        img.onerror = () => reject(new Error('Could not decode image format.'));
+        img.src = dataUrl;
+      };
+      reader.onerror = () => reject(new Error('Failed to read image file.'));
+      reader.readAsDataURL(file);
+    });
+
+    const sampleColorFromImageClick = (imgElement, clientX, clientY) => {
+      const rect = imgElement.getBoundingClientRect();
+      if (rect.width <= 0 || rect.height <= 0) return null;
+      const relX = (clientX - rect.left) / rect.width;
+      const relY = (clientY - rect.top) / rect.height;
+      if (relX < 0 || relX > 1 || relY < 0 || relY > 1) return null;
+      const natW = imgElement.naturalWidth || imgElement.width;
+      const natH = imgElement.naturalHeight || imgElement.height;
+      if (!natW || !natH) return null;
+      const px = Math.min(natW - 1, Math.max(0, Math.floor(relX * natW)));
+      const py = Math.min(natH - 1, Math.max(0, Math.floor(relY * natH)));
+      const canvas = document.createElement('canvas');
+      canvas.width = natW;
+      canvas.height = natH;
+      const ctx = canvas.getContext('2d', { willReadFrequently: true });
+      if (!ctx) return null;
+      ctx.drawImage(imgElement, 0, 0, natW, natH);
+      const pixel = ctx.getImageData(px, py, 1, 1).data;
+      if (pixel[3] < 20) return null;
+      return rgbToHex(pixel[0], pixel[1], pixel[2]);
+    };
+
+    const generatePaletteFromImageResult = (imageResult, count, style, strictWebSafe, lockedColors = []) => {
+      const safeCount = Math.min(10, Math.max(2, count));
+      const directColors = imageResult.colors.slice(0, safeCount).map((rawHex, idx) => {
+        const hexToUse = strictWebSafe ? getNearestWebSafe(rawHex) : rawHex;
+        const { h: hue, s, l } = hexToHsl(hexToUse);
+        return buildColorData(hexToUse, getColorName(hue, s, l), getColorRole(idx, safeCount, l, s), false, strictWebSafe);
+      });
+
+      if (directColors.length < safeCount) {
+        const harmonicFill = generateHarmonicPalette(safeCount, style, imageResult.colors.slice(0, 6), strictWebSafe, directColors);
+        const existingSet = new Set(directColors.map(c => c.hex.toUpperCase()));
+        for (const cand of harmonicFill.colors) {
+          if (directColors.length >= safeCount) break;
+          if (!existingSet.has(cand.hex.toUpperCase())) {
+            directColors.push({ ...cand, isLocked: false });
+            existingSet.add(cand.hex.toUpperCase());
+          }
+        }
+      }
+
+      const finalColors = directColors.slice(0, safeCount).map((c, idx) =>
+        lockedColors[idx] && lockedColors[idx].isLocked ? lockedColors[idx] : c
+      );
+
+      return {
+        paletteName: imageResult.fileName ? `Palette from ${imageResult.fileName.replace(/\.[^/.]+$/, '')}` : 'Image-Extracted Palette',
+        description: `Extracted ${imageResult.colors.length} dominant color${imageResult.colors.length === 1 ? '' : 's'} from your uploaded image with WCAG & 216 web-safe fidelity.`,
+        colors: finalColors,
+        harmonyType: style
+      };
+    };
+
+    /* ==========================================================================
+       COLOR CARD COMPONENT (FULL PARITY WITH components/ColorCard.tsx)
+       ========================================================================== */
+    function ColorCard({ color, index, onToggleLock, onSnapToWebSafe, onUpdateColor, onSelectForContrast }) {
+      const [copiedType, setCopiedType] = useState(null);
+      const [activeBg, setActiveBg] = useState('both');
+      const [showPreviewText, setShowPreviewText] = useState(false);
+      const [showSlider, setShowSlider] = useState(false);
+
+      const textColor = color.textColor || getContrastColor(color.hex);
+      const rgb = hexToRgb(color.hex);
+      const hsl = hexToHsl(color.hex);
+      const access = getColorAccessibility(color.hex);
+
+      const copyToClipboard = (text, type) => {
+        navigator.clipboard.writeText(text);
+        setCopiedType(type);
+        setTimeout(() => setCopiedType(null), 1800);
+      };
+
+      const renderBadge = (pass, label) => h('span', {
+        className: `inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[10px] font-mono font-bold tracking-tight ${pass ? 'bg-emerald-50 text-emerald-700 border border-emerald-200' : 'bg-rose-50 text-rose-600 border border-rose-200'}`
+      }, [
+        h('span', { key: 'dot', className: `w-1 h-1 rounded-full ${pass ? 'bg-emerald-500' : 'bg-rose-400'}` }),
+        `${label} ${pass ? 'Pass' : 'Fail'}`
+      ]);
+
+      return h('div', {
+        className: `group flex flex-col rounded-xl overflow-hidden bg-white border transition-all duration-200 shadow-sm hover:shadow-md ${color.isLocked ? 'border-[#71B94D] ring-2 ring-[#71B94D]/25' : 'border-slate-200 hover:border-slate-300'}`
+      }, [
+        // Top Swatch
+        h('div', {
+          key: 'top',
+          className: 'relative h-36 p-3.5 flex flex-col justify-between transition-colors select-none',
+          style: { backgroundColor: color.hex, color: textColor }
+        }, [
+          h('div', { key: 'bar', className: 'flex items-center justify-between' }, [
+            h('span', { className: 'text-xs font-semibold tracking-wider opacity-80 font-mono' }, `#${String(index + 1).padStart(2, '0')}`),
+            h('div', { className: 'flex items-center gap-1.5' }, [
+              h('button', {
+                onClick: () => onToggleLock(index),
+                className: `p-1.5 rounded-md transition-colors ${color.isLocked ? 'bg-black/30 backdrop-blur-sm opacity-100 text-white' : 'opacity-0 group-hover:opacity-100 hover:bg-black/20'}`,
+                title: color.isLocked ? 'Pinned (retains during generation)' : 'Pin this color'
+              }, color.isLocked ? h(LockIcon, { className: 'w-3.5 h-3.5 text-white' }) : h(UnlockIcon, { className: 'w-3.5 h-3.5' })),
+              h('button', {
+                onClick: () => copyToClipboard(color.hex, 'hex'),
+                className: 'p-1.5 rounded-md opacity-0 group-hover:opacity-100 hover:bg-black/20 transition-all',
+                title: 'Copy HEX code'
+              }, copiedType === 'hex' ? h(CheckIcon, { className: 'w-3.5 h-3.5 text-emerald-300' }) : h(CopyIcon, { className: 'w-3.5 h-3.5' }))
+            ])
+          ]),
+          h('div', { key: 'label' }, [
+            h('button', {
+              onClick: () => copyToClipboard(color.hex, 'hex'),
+              className: 'text-left focus:outline-none',
+              title: 'Click to copy HEX'
+            }, h('p', { className: 'text-2xl font-bold font-mono tracking-tight leading-none hover:underline' }, color.hex)),
+            h('p', { className: 'text-xs font-medium opacity-90 mt-1 truncate' }, color.name)
+          ])
+        ]),
+
+        // Details Area
+        h('div', { key: 'details', className: 'p-3.5 flex-1 flex flex-col justify-between space-y-3 bg-white text-slate-700 text-xs' }, [
+          // Suggested Usage
+          h('div', { key: 'usage' }, [
+            h('span', { className: 'text-[10px] font-semibold tracking-wider text-slate-400 uppercase' }, 'Suggested Usage'),
+            h('p', { className: 'text-xs font-medium text-slate-900 mt-0.5 truncate', title: color.usage }, color.usage)
+          ]),
+
+          // Web-Safe 216 Status
+          h('div', { key: 'websafe', className: 'pt-2 border-t border-slate-100 flex items-center justify-between text-[11px]' }, [
+            h('span', { className: 'text-slate-500 font-medium' }, 'Web-Safe:'),
+            color.isWebSafe
+              ? h('span', { className: 'inline-flex items-center gap-1 font-semibold text-emerald-700' }, [
+                  h('span', { key: 'dot', className: 'w-1.5 h-1.5 rounded-full bg-emerald-500' }),
+                  '216 Standard'
+                ])
+              : h('button', {
+                  type: 'button',
+                  onClick: () => onSnapToWebSafe(index),
+                  className: 'psq-btn inline-flex items-center gap-1 px-2 py-0.5 rounded font-mono text-[10px] font-semibold whitespace-nowrap',
+                  title: `Snap to nearest web-safe color ${color.webSafeHex}`
+                }, `Snap to ${color.webSafeHex}`)
+          ]),
+
+          // WCAG Contrast Section
+          h('div', { key: 'wcag', className: 'pt-2.5 border-t border-slate-100 space-y-2' }, [
+            h('div', { className: 'flex items-center justify-between gap-1' }, [
+              h('div', { className: 'flex items-center gap-1 text-slate-800 font-semibold text-[11px]' }, [
+                h(ShieldCheckIcon, { className: 'w-3.5 h-3.5 text-[#71B94D]' }),
+                h('span', null, 'WCAG Contrast')
+              ]),
+              h('div', { className: 'flex items-center gap-1 p-0.5 bg-slate-100 rounded text-[10px] font-medium' },
+                [['both', 'Both'], ['white', 'On #FFF'], ['black', 'On #000']].map(([val, label]) =>
+                  h('button', {
+                    key: val,
+                    type: 'button',
+                    'data-segmented': 'true',
+                    'data-active': activeBg === val ? 'true' : undefined,
+                    onClick: () => setActiveBg(val),
+                    className: 'psq-btn px-1.5 py-0.5 rounded font-semibold whitespace-nowrap'
+                  }, label)
+                )
+              )
+            ]),
+
+            h('div', { className: 'space-y-2' }, [
+              (activeBg === 'both' || activeBg === 'white') && h('div', { key: 'w', className: 'p-2 rounded-lg bg-slate-50/80 border border-slate-200/80 text-[11px] space-y-1.5' }, [
+                h('div', { className: 'flex items-center justify-between' }, [
+                  h('div', { className: 'flex items-center gap-1.5' }, [
+                    h('span', { className: 'w-2.5 h-2.5 rounded-full bg-white border border-slate-300 shadow-sm' }),
+                    h('span', { className: 'font-semibold text-slate-800' }, 'On White (#FFF)')
+                  ]),
+                  h('span', { className: 'font-mono font-bold text-slate-900' }, `${access.onWhite.ratio.toFixed(2)}:1`)
+                ]),
+                h('div', { className: 'grid grid-cols-2 gap-1.5 pt-1 border-t border-slate-200/50' }, [
+                  h('div', { className: 'space-y-0.5' }, [
+                    h('span', { className: 'text-[10px] text-slate-500 block' }, 'Small Text (<18pt):'),
+                    h('div', { className: 'flex items-center gap-1' }, [
+                      renderBadge(access.onWhite.smallText.aa, 'AA'),
+                      renderBadge(access.onWhite.smallText.aaa, 'AAA')
+                    ])
+                  ]),
+                  h('div', { className: 'space-y-0.5' }, [
+                    h('span', { className: 'text-[10px] text-slate-500 block' }, 'Large Text (≥18pt):'),
+                    h('div', { className: 'flex items-center gap-1' }, [
+                      renderBadge(access.onWhite.largeText.aa, 'AA'),
+                      renderBadge(access.onWhite.largeText.aaa, 'AAA')
+                    ])
+                  ])
+                ])
+              ]),
+
+              (activeBg === 'both' || activeBg === 'black') && h('div', { key: 'b', className: 'p-2 rounded-lg bg-slate-900 text-white text-[11px] space-y-1.5' }, [
+                h('div', { className: 'flex items-center justify-between' }, [
+                  h('div', { className: 'flex items-center gap-1.5' }, [
+                    h('span', { className: 'w-2.5 h-2.5 rounded-full bg-black border border-slate-600' }),
+                    h('span', { className: 'font-semibold text-slate-100' }, 'On Black (#000)')
+                  ]),
+                  h('span', { className: 'font-mono font-bold text-[#8CD168]' }, `${access.onBlack.ratio.toFixed(2)}:1`)
+                ]),
+                h('div', { className: 'grid grid-cols-2 gap-1.5 pt-1 border-t border-slate-800' }, [
+                  h('div', { className: 'space-y-0.5' }, [
+                    h('span', { className: 'text-[10px] text-slate-400 block' }, 'Small Text (<18pt):'),
+                    h('div', { className: 'flex items-center gap-1' }, [
+                      renderBadge(access.onBlack.smallText.aa, 'AA'),
+                      renderBadge(access.onBlack.smallText.aaa, 'AAA')
+                    ])
+                  ]),
+                  h('div', { className: 'space-y-0.5' }, [
+                    h('span', { className: 'text-[10px] text-slate-400 block' }, 'Large Text (≥18pt):'),
+                    h('div', { className: 'flex items-center gap-1' }, [
+                      renderBadge(access.onBlack.largeText.aa, 'AA'),
+                      renderBadge(access.onBlack.largeText.aaa, 'AAA')
+                    ])
+                  ])
+                ])
+              ])
+            ]),
+
+            // Live Typography Test Toggle
+            h('div', { className: 'pt-1' }, [
+              h('button', {
+                type: 'button',
+                'data-segmented': 'true',
+                'data-active': showPreviewText ? 'true' : undefined,
+                onClick: () => setShowPreviewText(!showPreviewText),
+                className: 'psq-btn text-[10px] px-2.5 py-1 rounded-md font-semibold flex items-center justify-between w-full'
+              }, [
+                h('span', { key: 't' }, showPreviewText ? 'Hide Live Typography Test' : 'Test Live Typography Rendering'),
+                h('span', { key: 'a' }, showPreviewText ? '▴' : '▾')
+              ]),
+              showPreviewText && h('div', { className: 'mt-2 space-y-1.5' }, [
+                h('div', { className: 'p-2 rounded bg-white border border-slate-200' }, [
+                  h('p', { className: 'text-[10px] text-slate-400 font-mono mb-0.5' }, 'White Canvas (#FFFFFF)'),
+                  h('p', { className: 'text-base font-bold leading-tight', style: { color: color.hex } }, 'Large 18pt Heading'),
+                  h('p', { className: 'text-xs leading-normal mt-0.5', style: { color: color.hex } }, 'Small 14px body text preview')
+                ]),
+                h('div', { className: 'p-2 rounded bg-black border border-slate-800' }, [
+                  h('p', { className: 'text-[10px] text-slate-500 font-mono mb-0.5' }, 'Black Canvas (#000000)'),
+                  h('p', { className: 'text-base font-bold leading-tight', style: { color: color.hex } }, 'Large 18pt Heading'),
+                  h('p', { className: 'text-xs leading-normal mt-0.5', style: { color: color.hex } }, 'Small 14px body text preview')
+                ])
+              ])
+            ]),
+
+            // In-Card Lightness Slider Adjuster
+            h('div', { className: 'pt-2 border-t border-slate-100 space-y-1.5' }, [
+              h('div', { className: 'flex items-center justify-between gap-1.5 flex-wrap' }, [
+                h('button', {
+                  type: 'button',
+                  'data-segmented': 'true',
+                  'data-active': showSlider ? 'true' : undefined,
+                  onClick: () => setShowSlider(!showSlider),
+                  className: 'psq-btn text-[10px] font-semibold px-2 py-1 rounded-md flex items-center gap-1 whitespace-nowrap'
+                }, [h(SlidersIcon, { className: 'w-3 h-3' }), h('span', null, showSlider ? 'Hide Slider' : 'Adjust Lightness')]),
+                h('button', {
+                  type: 'button',
+                  onClick: () => onSelectForContrast(index),
+                  className: 'psq-btn text-[10px] px-2 py-1 rounded-md font-semibold whitespace-nowrap'
+                }, 'Compare →')
+              ]),
+
+              showSlider && h('div', { className: 'p-2.5 bg-slate-50 rounded-lg border border-slate-200 space-y-2' }, [
+                h('div', { className: 'flex items-center justify-between text-[11px]' }, [
+                  h('span', { className: 'font-medium text-slate-600' }, 'Lightness'),
+                  h('span', { className: 'font-mono font-bold text-slate-800' }, `${hsl.l}%`)
+                ]),
+                h('input', {
+                  type: 'range',
+                  min: 0,
+                  max: 100,
+                  value: hsl.l,
+                  onChange: (e) => onUpdateColor(index, adjustColorLightness(color.hex, Number(e.target.value))),
+                  className: 'w-full h-3 rounded-lg appearance-none cursor-pointer focus:outline-none accent-[#71B94D]',
+                  style: { background: `linear-gradient(to right, #000000, ${hslToHex(hsl.h, hsl.s, 50)}, #ffffff)` }
+                }),
+                h('div', { className: 'flex items-center gap-1 pt-0.5 flex-wrap' }, [
+                  !access.onWhite.smallText.aa && h('button', {
+                    type: 'button',
+                    onClick: () => {
+                      const res = findPassingLightness(color.hex, '#FFFFFF', 4.5);
+                      if (res) onUpdateColor(index, res.hex);
+                    },
+                    className: 'psq-btn text-[10px] px-2 py-0.5 rounded font-semibold whitespace-nowrap'
+                  }, 'Fix on #FFF'),
+                  !access.onBlack.smallText.aa && h('button', {
+                    type: 'button',
+                    onClick: () => {
+                      const res = findPassingLightness(color.hex, '#000000', 4.5);
+                      if (res) onUpdateColor(index, res.hex);
+                    },
+                    className: 'psq-btn text-[10px] px-2 py-0.5 rounded font-semibold whitespace-nowrap'
+                  }, 'Fix on #000')
+                ])
+              ])
+            ])
+          ]),
+
+          // Format Copy Strip
+          h('div', { key: 'copy-strip', className: 'pt-2 border-t border-slate-100 flex items-center justify-between gap-1 text-[11px] font-mono' }, [
+            h('button', {
+              type: 'button',
+              onClick: () => copyToClipboard(`rgb(${rgb.r}, ${rgb.g}, ${rgb.b})`, 'rgb'),
+              className: 'psq-btn flex-1 px-1.5 py-1 rounded text-[10px] font-mono font-semibold text-center whitespace-nowrap'
+            }, copiedType === 'rgb' ? 'Copied!' : 'RGB'),
+            h('button', {
+              type: 'button',
+              onClick: () => copyToClipboard(`hsl(${hsl.h}, ${hsl.s}%, ${hsl.l}%)`, 'hsl'),
+              className: 'psq-btn flex-1 px-1.5 py-1 rounded text-[10px] font-mono font-semibold text-center whitespace-nowrap'
+            }, copiedType === 'hsl' ? 'Copied!' : 'HSL'),
+            h('button', {
+              type: 'button',
+              onClick: () => copyToClipboard(`--color-${index + 1}: ${color.hex};`, 'var'),
+              className: 'psq-btn flex-1 px-1.5 py-1 rounded text-[10px] font-mono font-semibold text-center whitespace-nowrap'
+            }, copiedType === 'var' ? 'Copied!' : 'CSS Var')
+          ])
+        ])
+      ]);
+    }
+
+    /* ==========================================================================
+       CONTRAST MATRIX COMPONENT (FULL PARITY WITH components/ContrastMatrix.tsx)
+       ========================================================================== */
+    function ContrastMatrix({ colors, fgIndex, setFgIndex, bgIndex, setBgIndex, onUpdateColor }) {
+      const [adjustTarget, setAdjustTarget] = useState('fg');
+      const [filterMode, setFilterMode] = useState('all');
+      const [showAdvancedHsl, setShowAdvancedHsl] = useState(false);
+      const [liveSync, setLiveSync] = useState(true);
+      const [copiedPair, setCopiedPair] = useState(null);
+
+      const safeFgIndex = Math.min(fgIndex, colors.length - 1);
+      const safeBgIndex = Math.min(bgIndex, colors.length - 1);
+      const fgColor = colors[safeFgIndex] || colors[0];
+      const bgColor = colors[safeBgIndex] || (colors.length > 1 ? colors[1] : colors[0]);
+      const targetIndex = adjustTarget === 'fg' ? safeFgIndex : safeBgIndex;
+      const activeColor = colors[targetIndex];
+      const companionColor = adjustTarget === 'fg' ? bgColor : fgColor;
+
+      const activeHsl = useMemo(() => hexToHsl(activeColor.hex), [activeColor.hex]);
+      const currentRatio = useMemo(() => getContrastRatio(fgColor.hex, bgColor.hex), [fgColor.hex, bgColor.hex]);
+      const currentWcag = useMemo(() => getWcagStatus(fgColor.hex, bgColor.hex), [fgColor.hex, bgColor.hex]);
+
+      const stats = useMemo(() => {
+        let totalPairs = 0, passingAa = 0, failing = 0;
+        for (let i = 0; i < colors.length; i++) {
+          for (let j = i + 1; j < colors.length; j++) {
+            totalPairs++;
+            if (getContrastRatio(colors[i].hex, colors[j].hex) >= 4.5) passingAa++;
+            else failing++;
+          }
+        }
+        return { totalPairs, passingAa, failing };
+      }, [colors]);
+
+      const handleAutoAdjust = (targetRatio) => {
+        const res = findPassingLightness(activeColor.hex, companionColor.hex, targetRatio);
+        if (res) onUpdateColor(targetIndex, res.hex);
+      };
+
+      const handleSwap = () => {
+        const prevFg = safeFgIndex;
+        setFgIndex(safeBgIndex);
+        setBgIndex(prevFg);
+        setAdjustTarget(prev => prev === 'fg' ? 'bg' : 'fg');
+      };
+
+      const handleCopyPair = () => {
+        const text = `Contrast: ${currentRatio}:1 | FG: ${fgColor.hex} (${fgColor.name}) on BG: ${bgColor.hex} (${bgColor.name}) | WCAG AA: ${currentWcag.smallText.aa ? 'PASS' : 'FAIL'} | WCAG AAA: ${currentWcag.smallText.aaa ? 'PASS' : 'FAIL'}`;
+        navigator.clipboard.writeText(text);
+        setCopiedPair(`${fgColor.hex}-${bgColor.hex}`);
+        setTimeout(() => setCopiedPair(null), 1600);
+      };
+
+      return h('section', { id: 'cross-contrast', className: 'bg-white rounded-2xl border border-slate-200/90 shadow-sm overflow-hidden scroll-mt-24' }, [
+        // Banner Header
+        h('div', { key: 'banner', className: 'p-6 md:p-8 border-b border-slate-100 bg-gradient-to-r from-slate-50 via-white to-[#71B94D]/10' }, [
+          h('div', { className: 'flex flex-col md:flex-row md:items-center justify-between gap-4' }, [
+            h('div', null, [
+              h('div', { className: 'inline-flex items-center gap-1.5 text-[#4E8433] text-xs font-bold uppercase tracking-wider mb-1.5' }, [
+                h(ShieldCheckIcon, { className: 'w-3.5 h-3.5 text-[#71B94D]' }),
+                h('span', null, 'Color-to-Color Contrast Engine')
+              ]),
+              h('h3', { className: 'text-xl sm:text-2xl font-extrabold text-slate-900 tracking-tight' }, 'Cross-Color WCAG Contrast & Real-Time Adjuster'),
+              h('p', { className: 'text-xs sm:text-sm text-slate-600 mt-1 max-w-2xl' },
+                'Inspect how every color in your palette contrasts against every other color. Use the real-time slider below to adjust lightness, hue, or saturation if any pair fails WCAG contrast standards.'
+              )
+            ]),
+            h('div', { className: 'flex items-center gap-2 flex-wrap' }, [
+              h('div', { className: 'px-3 py-2 bg-white rounded-xl border border-slate-200 shadow-sm text-center min-w-[85px]' }, [
+                h('span', { className: 'block text-base font-extrabold text-slate-900 font-mono' }, `${stats.passingAa}/${stats.totalPairs}`),
+                h('span', { className: 'text-[10px] font-semibold text-emerald-600 uppercase tracking-wider' }, 'AA Passing (4.5+)')
+              ]),
+              h('div', { className: 'px-3 py-2 bg-white rounded-xl border border-slate-200 shadow-sm text-center min-w-[85px]' }, [
+                h('span', { className: 'block text-base font-extrabold text-slate-900 font-mono' }, stats.failing),
+                h('span', { className: 'text-[10px] font-semibold text-rose-500 uppercase tracking-wider' }, 'Needs Tuning')
+              ])
+            ])
+          ])
+        ]),
+
+        h('div', { key: 'body', className: 'p-6 md:p-8 space-y-8' }, [
+          // Interactive Pair Tuner
+          h('div', { className: 'bg-slate-50/80 rounded-2xl border border-slate-200 p-5 md:p-6 space-y-6' }, [
+            h('div', { className: 'flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 border-b border-slate-200/80' }, [
+              h('div', { className: 'flex items-center gap-2' }, [
+                h('span', { className: 'inline-grid grid-cols-2 gap-0.5 w-3 h-3 shrink-0', 'aria-hidden': 'true' }, [
+                  h('span', { key: '1', className: 'rounded-tl-full bg-[#68E246]' }),
+                  h('span', { key: '2', className: 'rounded-tr-full bg-[#10A3FF]' }),
+                  h('span', { key: '3', className: 'rounded-bl-full bg-[#FC57E5]' }),
+                  h('span', { key: '4', className: 'rounded-br-full bg-[#FFB82A]' })
+                ]),
+                h('span', { className: 'text-xs font-bold uppercase tracking-wider text-slate-800' }, 'Interactive Pair Tuner & Contrast Slider')
+              ]),
+              h('div', { className: 'flex items-center gap-2 text-xs' }, [
+                h('label', { className: 'flex items-center gap-1.5 cursor-pointer text-slate-600 font-medium select-none' }, [
+                  h('input', {
+                    type: 'checkbox',
+                    checked: liveSync,
+                    onChange: (e) => setLiveSync(e.target.checked),
+                    className: 'rounded border-slate-300 accent-[#71B94D] focus:ring-[#71B94D] w-3.5 h-3.5'
+                  }),
+                  h('span', null, 'Live update palette')
+                ]),
+                h('button', {
+                  type: 'button',
+                  onClick: handleCopyPair,
+                  className: 'psq-btn px-2.5 py-1 text-[11px] font-semibold rounded-md whitespace-nowrap'
+                }, copiedPair ? 'Copied Specs!' : 'Copy Specs')
+              ])
+            ]),
+
+            // FG / Ratio / BG Row
+            h('div', { className: 'grid grid-cols-1 lg:grid-cols-12 gap-6 items-center' }, [
+              // FG Card
+              h('div', { className: 'lg:col-span-4 bg-white p-4 rounded-xl border border-slate-200 shadow-sm space-y-3' }, [
+                h('div', { className: 'flex items-center justify-between' }, [
+                  h('span', { className: 'text-[11px] font-bold text-slate-400 uppercase tracking-wider' }, 'Foreground (Text)'),
+                  h('button', {
+                    type: 'button',
+                    'data-segmented': 'true',
+                    'data-active': adjustTarget === 'fg' ? 'true' : undefined,
+                    onClick: () => setAdjustTarget('fg'),
+                    className: 'psq-btn text-[10px] font-bold px-2.5 py-0.5 rounded whitespace-nowrap'
+                  }, adjustTarget === 'fg' ? '● Adjusting' : 'Select to Adjust')
+                ]),
+                h('div', { className: 'flex items-center gap-3' }, [
+                  h('div', { className: 'w-12 h-12 rounded-xl shadow-inner border border-black/10 shrink-0', style: { backgroundColor: fgColor.hex } }),
+                  h('div', { className: 'flex-1 min-w-0' }, [
+                    h('div', { className: 'flex items-center gap-1.5' }, [
+                      h('span', { className: 'font-mono text-base font-bold text-slate-900' }, fgColor.hex),
+                      fgColor.isWebSafe && h('span', { className: 'text-[10px] bg-emerald-100 text-emerald-800 px-1 rounded font-mono font-bold' }, 'Safe')
+                    ]),
+                    h('p', { className: 'text-xs text-slate-500 truncate' }, fgColor.name)
+                  ])
+                ]),
+                h('div', null, [
+                  h('label', { className: 'text-[10px] font-medium text-slate-400 block mb-1' }, 'Change Color:'),
+                  h('select', {
+                    value: safeFgIndex,
+                    onChange: (e) => setFgIndex(Number(e.target.value)),
+                    className: 'w-full text-xs bg-slate-50 border border-slate-200 rounded-lg px-2.5 py-1.5 font-medium text-slate-700 focus:outline-none focus:ring-1 focus:ring-[#71B94D]'
+                  }, colors.map((c, i) => h('option', { key: i, value: i }, `#${i + 1} ${c.hex} - ${c.name}`)))
+                ])
+              ]),
+
+              // Center Ratio & Badges
+              h('div', { className: 'lg:col-span-4 flex flex-col items-center justify-center text-center p-4 bg-white rounded-xl border border-slate-200 shadow-sm space-y-3' }, [
+                h('button', {
+                  type: 'button',
+                  onClick: handleSwap,
+                  className: 'psq-btn inline-flex items-center gap-1.5 px-3 py-1 text-xs font-semibold rounded-lg whitespace-nowrap'
+                }, [h('span', { key: 't' }, 'Swap Colors'), h('span', { key: 'i', className: 'font-bold' }, '⇄')]),
+                h('div', null, [
+                  h('span', { className: 'text-[10px] font-bold uppercase tracking-wider text-slate-400 block' }, 'Contrast Ratio'),
+                  h('span', {
+                    className: `text-3xl sm:text-4xl font-extrabold font-mono tracking-tight ${currentRatio >= 7.0 ? 'text-emerald-600' : currentRatio >= 4.5 ? 'text-[#4E8433]' : currentRatio >= 3.0 ? 'text-amber-600' : 'text-rose-600'}`
+                  }, `${currentRatio.toFixed(2)}:1`)
+                ]),
+                h('div', { className: 'flex flex-wrap items-center justify-center gap-1.5' }, [
+                  h('span', { className: `px-2 py-0.5 rounded text-[10px] font-mono font-bold ${currentWcag.smallText.aa ? 'bg-emerald-100 text-emerald-800 border border-emerald-300' : 'bg-rose-100 text-rose-800 border border-rose-300'}` },
+                    `AA Normal ${currentWcag.smallText.aa ? '✓ PASS' : '✕ FAIL'}`
+                  ),
+                  h('span', { className: `px-2 py-0.5 rounded text-[10px] font-mono font-bold ${currentWcag.smallText.aaa ? 'bg-emerald-100 text-emerald-800 border border-emerald-300' : 'bg-slate-100 text-slate-600 border border-slate-200'}` },
+                    `AAA ${currentWcag.smallText.aaa ? '✓ PASS' : '✕ FAIL'}`
+                  ),
+                  h('span', { className: `px-2 py-0.5 rounded text-[10px] font-mono font-bold ${currentWcag.largeText.aa ? 'bg-sky-100 text-sky-800 border border-sky-300' : 'bg-rose-100 text-rose-800 border border-rose-300'}` },
+                    `Large Text ${currentWcag.largeText.aa ? '✓' : '✕'}`
+                  )
+                ])
+              ]),
+
+              // BG Card
+              h('div', { className: 'lg:col-span-4 bg-white p-4 rounded-xl border border-slate-200 shadow-sm space-y-3' }, [
+                h('div', { className: 'flex items-center justify-between' }, [
+                  h('span', { className: 'text-[11px] font-bold text-slate-400 uppercase tracking-wider' }, 'Background'),
+                  h('button', {
+                    type: 'button',
+                    'data-segmented': 'true',
+                    'data-active': adjustTarget === 'bg' ? 'true' : undefined,
+                    onClick: () => setAdjustTarget('bg'),
+                    className: 'psq-btn text-[10px] font-bold px-2.5 py-0.5 rounded whitespace-nowrap'
+                  }, adjustTarget === 'bg' ? '● Adjusting' : 'Select to Adjust')
+                ]),
+                h('div', { className: 'flex items-center gap-3' }, [
+                  h('div', { className: 'w-12 h-12 rounded-xl shadow-inner border border-black/10 shrink-0', style: { backgroundColor: bgColor.hex } }),
+                  h('div', { className: 'flex-1 min-w-0' }, [
+                    h('div', { className: 'flex items-center gap-1.5' }, [
+                      h('span', { className: 'font-mono text-base font-bold text-slate-900' }, bgColor.hex),
+                      bgColor.isWebSafe && h('span', { className: 'text-[10px] bg-emerald-100 text-emerald-800 px-1 rounded font-mono font-bold' }, 'Safe')
+                    ]),
+                    h('p', { className: 'text-xs text-slate-500 truncate' }, bgColor.name)
+                  ])
+                ]),
+                h('div', null, [
+                  h('label', { className: 'text-[10px] font-medium text-slate-400 block mb-1' }, 'Change Color:'),
+                  h('select', {
+                    value: safeBgIndex,
+                    onChange: (e) => setBgIndex(Number(e.target.value)),
+                    className: 'w-full text-xs bg-slate-50 border border-slate-200 rounded-lg px-2.5 py-1.5 font-medium text-slate-700 focus:outline-none focus:ring-1 focus:ring-[#71B94D]'
+                  }, colors.map((c, i) => h('option', { key: i, value: i }, `#${i + 1} ${c.hex} - ${c.name}`)))
+                ])
+              ])
+            ]),
+
+            // Adjuster Slider Card
+            h('div', { className: 'bg-white rounded-xl border border-slate-200 p-5 space-y-5' }, [
+              h('div', { className: 'flex flex-col sm:flex-row sm:items-center justify-between gap-2' }, [
+                h('div', null, [
+                  h('div', { className: 'flex items-center gap-2' }, [
+                    h('span', { className: 'text-xs font-bold text-slate-900' }, `Adjusting: ${adjustTarget === 'fg' ? 'Foreground' : 'Background'} #${targetIndex + 1} (${activeColor.hex})`),
+                    h('span', { className: 'text-[11px] font-mono text-slate-500' }, `Lightness: ${activeHsl.l}%`)
+                  ]),
+                  h('p', { className: 'text-[11px] text-slate-500' }, 'Drag the slider to increase or decrease lightness until the pair passes WCAG contrast.')
+                ]),
+                h('div', { className: 'flex items-center gap-1.5 flex-wrap' }, [
+                  h('button', {
+                    type: 'button',
+                    onClick: () => handleAutoAdjust(4.5),
+                    className: 'psq-btn px-2.5 py-1 text-xs font-semibold rounded-lg flex items-center gap-1 whitespace-nowrap'
+                  }, [h(SparklesIcon, { className: 'w-3.5 h-3.5' }), h('span', null, 'Auto-Fix to AA (4.5:1)')]),
+                  h('button', {
+                    type: 'button',
+                    onClick: () => handleAutoAdjust(7.0),
+                    className: 'psq-btn px-2.5 py-1 text-xs font-semibold rounded-lg flex items-center gap-1 whitespace-nowrap'
+                  }, [h(SparklesIcon, { className: 'w-3.5 h-3.5' }), h('span', null, 'Auto-Fix to AAA (7:1)')]),
+                  h('button', {
+                    type: 'button',
+                    onClick: () => onUpdateColor(targetIndex, getNearestWebSafe(activeColor.hex)),
+                    className: 'psq-btn px-2.5 py-1 text-xs font-semibold rounded-lg whitespace-nowrap'
+                  }, 'Snap 216 Safe')
+                ])
+              ]),
+
+              // Lightness Slider
+              h('div', { className: 'space-y-2' }, [
+                h('div', { className: 'flex items-center justify-between text-xs font-medium text-slate-600' }, [
+                  h('span', { className: 'flex items-center gap-1.5 font-bold' }, [
+                    h('span', { key: 'l' }, 'Lightness Slider'),
+                    h('span', { key: 'r', className: 'text-slate-400 font-normal' }, '(0% Black → 100% White)')
+                  ]),
+                  h('span', { className: 'font-mono font-bold text-slate-900 bg-slate-100 px-2 py-0.5 rounded' }, `${activeHsl.l}%`)
+                ]),
+                h('input', {
+                  type: 'range',
+                  min: 0,
+                  max: 100,
+                  value: activeHsl.l,
+                  onChange: (e) => { if (liveSync) onUpdateColor(targetIndex, adjustColorLightness(activeColor.hex, Number(e.target.value))); },
+                  className: 'w-full h-4 rounded-lg appearance-none cursor-pointer focus:outline-none shadow-inner accent-[#71B94D]',
+                  style: { background: `linear-gradient(to right, #000000, ${hslToHex(activeHsl.h, activeHsl.s, 50)}, #ffffff)` }
+                }),
+                h('div', { className: 'flex justify-between text-[10px] text-slate-400 font-mono' }, [
+                  h('span', { key: '0' }, '0% Dark'),
+                  h('span', { key: '25' }, '25%'),
+                  h('span', { key: '50' }, '50% Mid'),
+                  h('span', { key: '75' }, '75%'),
+                  h('span', { key: '100' }, '100% Light')
+                ])
+              ]),
+
+              // Fine-Tune Hue & Saturation
+              h('div', null, [
+                h('button', {
+                  type: 'button',
+                  'data-segmented': 'true',
+                  'data-active': showAdvancedHsl ? 'true' : undefined,
+                  onClick: () => setShowAdvancedHsl(!showAdvancedHsl),
+                  className: 'psq-btn text-xs font-semibold px-3 py-1 rounded-lg flex items-center gap-1.5 whitespace-nowrap'
+                }, showAdvancedHsl ? '▴ Hide Hue & Saturation Tuning' : '▾ Fine-Tune Hue & Saturation'),
+                showAdvancedHsl && h('div', { className: 'mt-4 pt-4 border-t border-slate-100 grid grid-cols-1 sm:grid-cols-2 gap-4' }, [
+                  h('div', { className: 'space-y-1.5' }, [
+                    h('div', { className: 'flex justify-between text-xs font-medium' }, [
+                      h('span', null, 'Hue'),
+                      h('span', { className: 'font-mono text-slate-700' }, `${activeHsl.h}°`)
+                    ]),
+                    h('input', {
+                      type: 'range', min: 0, max: 360, value: activeHsl.h,
+                      onChange: (e) => { if (liveSync) onUpdateColor(targetIndex, adjustColorHsl(activeColor.hex, { h: Number(e.target.value) })); },
+                      className: 'w-full h-3 rounded-lg appearance-none cursor-pointer',
+                      style: { background: 'linear-gradient(to right, #f00 0%, #ff0 17%, #0f0 33%, #0ff 50%, #00f 67%, #f0f 83%, #f00 100%)' }
+                    })
+                  ]),
+                  h('div', { className: 'space-y-1.5' }, [
+                    h('div', { className: 'flex justify-between text-xs font-medium' }, [
+                      h('span', null, 'Saturation'),
+                      h('span', { className: 'font-mono text-slate-700' }, `${activeHsl.s}%`)
+                    ]),
+                    h('input', {
+                      type: 'range', min: 0, max: 100, value: activeHsl.s,
+                      onChange: (e) => { if (liveSync) onUpdateColor(targetIndex, adjustColorHsl(activeColor.hex, { s: Number(e.target.value) })); },
+                      className: 'w-full h-3 rounded-lg appearance-none cursor-pointer',
+                      style: { background: `linear-gradient(to right, ${hslToHex(activeHsl.h, 0, activeHsl.l)}, ${hslToHex(activeHsl.h, 100, activeHsl.l)})` }
+                    })
+                  ])
+                ])
+              ])
+            ]),
+
+            // Live Real-World UI Contrast Testing (Normal & Inverted Cards)
+            h('div', { className: 'space-y-2' }, [
+              h('span', { className: 'text-[11px] font-bold text-slate-400 uppercase tracking-wider block' }, 'Live Real-World UI Contrast Testing'),
+              h('div', { className: 'grid grid-cols-1 md:grid-cols-2 gap-4' }, [
+                h('div', {
+                  className: 'p-5 rounded-xl border border-slate-200 transition-colors shadow-sm space-y-3',
+                  style: { backgroundColor: bgColor.hex, color: fgColor.hex }
+                }, [
+                  h('div', { className: 'flex items-center justify-between text-[11px] opacity-80 font-mono' }, [
+                    h('span', null, `FG (${fgColor.hex}) on BG (${bgColor.hex})`),
+                    h('span', { className: 'font-bold' }, `${currentRatio.toFixed(2)}:1`)
+                  ]),
+                  h('h4', { className: 'text-xl font-bold tracking-tight' }, 'Display Heading 20pt (WCAG AA Large)'),
+                  h('p', { className: 'text-xs leading-relaxed opacity-95' }, 'Body copy rendered in foreground text. When contrast exceeds 4.5:1, all readers can effortlessly read this copy on any device screen.'),
+                  h('div', { className: 'pt-2 flex items-center gap-2' }, [
+                    h('div', { className: 'px-3 py-1.5 rounded-lg text-xs font-bold border', style: { borderColor: fgColor.hex, color: fgColor.hex } }, 'Outlined Button'),
+                    h('span', { className: 'text-[11px] opacity-80' }, 'Interactive element check')
+                  ])
+                ]),
+                h('div', {
+                  className: 'p-5 rounded-xl border border-slate-200 transition-colors shadow-sm space-y-3',
+                  style: { backgroundColor: fgColor.hex, color: bgColor.hex }
+                }, [
+                  h('div', { className: 'flex items-center justify-between text-[11px] opacity-80 font-mono' }, [
+                    h('span', null, `Inverted: BG (${bgColor.hex}) on FG (${fgColor.hex})`),
+                    h('span', { className: 'font-bold' }, `${currentRatio.toFixed(2)}:1`)
+                  ]),
+                  h('h4', { className: 'text-xl font-bold tracking-tight' }, 'Inverted Heading 20pt'),
+                  h('p', { className: 'text-xs leading-relaxed opacity-95' }, 'Reverse contrast evaluation allows testing inverted card designs, active navigation tabs, and dark mode variations.'),
+                  h('div', { className: 'pt-2 flex items-center gap-2' }, [
+                    h('div', { className: 'px-3 py-1.5 rounded-lg text-xs font-bold border', style: { borderColor: bgColor.hex, color: bgColor.hex } }, 'Inverted Button'),
+                    h('span', { className: 'text-[11px] opacity-80' }, 'Reversible token validation')
+                  ])
+                ])
+              ])
+            ])
+          ]),
+
+          // All-Pairs Contrast Matrix Grid
+          h('div', { className: 'space-y-4' }, [
+            h('div', { className: 'flex flex-col sm:flex-row sm:items-center justify-between gap-3' }, [
+              h('div', null, [
+                h('h4', { className: 'text-base font-bold text-slate-900' }, 'All-Pairs Contrast Matrix Grid'),
+                h('p', { className: 'text-xs text-slate-500' }, 'Click any cell to load and adjust that pair in the slider above.')
+              ]),
+              h('div', { className: 'flex items-center gap-1.5 p-1 bg-slate-100 rounded-lg text-xs font-medium' }, [
+                h('button', {
+                  type: 'button',
+                  'data-segmented': 'true',
+                  'data-active': filterMode === 'all' ? 'true' : undefined,
+                  onClick: () => setFilterMode('all'),
+                  className: 'psq-btn px-3 py-1 rounded-md font-semibold whitespace-nowrap'
+                }, `All Combinations (${stats.totalPairs})`),
+                h('button', {
+                  type: 'button',
+                  'data-segmented': 'true',
+                  'data-active': filterMode === 'fail' ? 'true' : undefined,
+                  onClick: () => setFilterMode('fail'),
+                  className: 'psq-btn px-3 py-1 rounded-md font-semibold whitespace-nowrap'
+                }, `Failing Only (${stats.failing})`),
+                h('button', {
+                  type: 'button',
+                  'data-segmented': 'true',
+                  'data-active': filterMode === 'pass' ? 'true' : undefined,
+                  onClick: () => setFilterMode('pass'),
+                  className: 'psq-btn px-3 py-1 rounded-md font-semibold whitespace-nowrap'
+                }, `Passing AA (${stats.passingAa})`)
+              ])
+            ]),
+
+            h('div', { className: 'overflow-x-auto border border-slate-200 rounded-xl bg-white shadow-sm' }, [
+              h('table', { className: 'w-full text-xs text-left border-collapse' }, [
+                h('thead', null, [
+                  h('tr', { className: 'bg-slate-50 border-b border-slate-200' }, [
+                    h('th', { className: 'p-3 text-[11px] font-bold text-slate-400 uppercase tracking-wider sticky left-0 bg-slate-50 z-10' }, 'FG ↓ \\ BG →'),
+                    colors.map((c, idx) => h('th', { key: idx, className: 'p-3 text-center min-w-[90px] border-l border-slate-200/60' }, [
+                      h('div', { className: 'flex flex-col items-center gap-1' }, [
+                        h('span', { className: 'w-5 h-5 rounded-md border border-black/10 shadow-sm', style: { backgroundColor: c.hex } }),
+                        h('span', { className: 'font-mono text-[11px] font-bold text-slate-800' }, `#${idx + 1}`),
+                        h('span', { className: 'font-mono text-[10px] text-slate-400' }, c.hex)
+                      ])
+                    ]))
+                  ])
+                ]),
+                h('tbody', { className: 'divide-y divide-slate-100' },
+                  colors.map((colorA, indexA) => h('tr', { key: indexA, className: 'hover:bg-slate-50/50' }, [
+                    h('td', { className: 'p-3 sticky left-0 bg-white hover:bg-slate-50 z-10 border-r border-slate-200' }, [
+                      h('div', { className: 'flex items-center gap-2' }, [
+                        h('span', { className: 'w-5 h-5 rounded-md border border-black/10 shadow-sm shrink-0', style: { backgroundColor: colorA.hex } }),
+                        h('div', { className: 'min-w-0' }, [
+                          h('p', { className: 'font-mono text-xs font-bold text-slate-900 leading-tight' }, `#${indexA + 1} ${colorA.hex}`),
+                          h('p', { className: 'text-[10px] text-slate-400 truncate max-w-[100px]' }, colorA.name)
+                        ])
+                      ])
+                    ]),
+                    colors.map((colorB, indexB) => {
+                      const isSame = indexA === indexB;
+                      if (isSame) return h('td', { key: indexB, className: 'p-2.5 text-center border-l border-slate-100 bg-slate-50 text-slate-300 font-mono text-[11px]' }, '1:1');
+                      const ratio = getContrastRatio(colorA.hex, colorB.hex);
+                      const passesAa = ratio >= 4.5, passesAaa = ratio >= 7.0, passesLg = ratio >= 3.0;
+                      const isSelected = (safeFgIndex === indexA && safeBgIndex === indexB) || (safeFgIndex === indexB && safeBgIndex === indexA);
+
+                      if ((filterMode === 'fail' && passesAa) || (filterMode === 'pass' && !passesAa)) {
+                        return h('td', { key: indexB, className: 'p-2 text-center border-l border-slate-100 bg-slate-50/40 opacity-30' },
+                          h('span', { className: 'font-mono text-[10px] text-slate-400' }, '-')
+                        );
+                      }
+
+                      return h('td', {
+                        key: indexB,
+                        onClick: () => { setFgIndex(indexA); setBgIndex(indexB); },
+                        className: `p-2.5 text-center border-l border-slate-100 cursor-pointer transition-all hover:bg-[#71B94D]/10 ${isSelected ? 'ring-2 ring-[#71B94D] bg-[#71B94D]/15 font-bold' : ''}`,
+                        title: `Click to adjust #${indexA + 1} vs #${indexB + 1}`
+                      }, h('div', { className: 'flex flex-col items-center gap-0.5' }, [
+                        h('span', { className: `font-mono text-xs font-bold ${passesAaa ? 'text-emerald-700' : passesAa ? 'text-[#4E8433]' : passesLg ? 'text-amber-600' : 'text-rose-600'}` }, `${ratio.toFixed(1)}:1`),
+                        h('span', { className: `text-[9px] px-1 py-0.5 rounded font-mono font-bold ${passesAaa ? 'bg-emerald-100 text-emerald-800' : passesAa ? 'bg-[#71B94D]/20 text-[#3B6B24]' : passesLg ? 'bg-amber-100 text-amber-800' : 'bg-rose-100 text-rose-700'}` },
+                          passesAaa ? 'AAA' : passesAa ? 'AA' : passesLg ? 'AA Lg' : 'FAIL'
+                        )
+                      ]));
+                    })
+                  ]))
+                )
+              ])
+            ]),
+
+            h('div', { className: 'flex flex-wrap items-center justify-between text-xs text-slate-500 pt-2 gap-2' }, [
+              h('div', { className: 'flex items-center gap-4 flex-wrap' }, [
+                h('span', { className: 'flex items-center gap-1.5' }, [h('span', { className: 'w-2 h-2 rounded-full bg-emerald-500' }), h('span', null, 'AAA: ≥ 7.0:1 (Enhanced)')]),
+                h('span', { className: 'flex items-center gap-1.5' }, [h('span', { className: 'w-2 h-2 rounded-full bg-[#71B94D]' }), h('span', null, 'AA: ≥ 4.5:1 (Normal Text)')]),
+                h('span', { className: 'flex items-center gap-1.5' }, [h('span', { className: 'w-2 h-2 rounded-full bg-amber-500' }), h('span', null, 'AA Lg: ≥ 3.0:1 (Large & UI)')]),
+                h('span', { className: 'flex items-center gap-1.5' }, [h('span', { className: 'w-2 h-2 rounded-full bg-rose-500' }), h('span', null, 'Fail: < 3.0:1')])
+              ]),
+              h('span', { className: 'text-[11px] font-mono text-slate-400' }, '* Click any cell to tune lightness with the live slider.')
+            ])
+          ])
+        ])
+      ]);
+    }
+
+    /* ==========================================================================
+       EXPORT MODAL COMPONENT (CSS, TAILWIND, JSON, SVG, STANDALONE HTML)
+       ========================================================================== */
+    function ExportModal({ isOpen, onClose, paletteName, colors }) {
+      const [tab, setTab] = useState('css');
+      const [copied, setCopied] = useState(false);
+      if (!isOpen) return null;
+
+      const slug = paletteName.toLowerCase().replace(/[^a-z0-9]+/g, '-');
+
+      const cssContent = `:root {\n  /* Web-Safe Color Palette: ${paletteName} */\n${colors.map((c, i) => `  --color-${i + 1}: ${c.hex}; /* ${c.name} - ${c.usage} */`).join('\n')}\n}`;
+      const tailwindContent = `// tailwind.config.js\nmodule.exports = {\n  theme: {\n    extend: {\n      colors: {\n        '${slug}': {\n${colors.map((c, i) => `          ${(i + 1) * 100}: '${c.hex}', // ${c.name}`).join('\n')}\n        }\n      }\n    }\n  }\n};`;
+      const jsonContent = JSON.stringify({ paletteName, generatedAt: new Date().toISOString(), totalColors: colors.length, colors: colors.map((c, i) => ({ token: `color-${i + 1}`, hex: c.hex, name: c.name, role: c.usage, isWebSafe: c.isWebSafe, webSafeHex: c.webSafeHex, contrastWhite: c.contrastWhite, contrastBlack: c.contrastBlack, accessibility: c.accessibility })) }, null, 2);
+      const swatchW = 120, swatchH = 160, totalSvgW = colors.length * swatchW;
+      const svgContent = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${totalSvgW} ${swatchH}" width="${totalSvgW}" height="${swatchH}">\n  <style>.label { font-family: 'Plus Jakarta Sans', 'Inter', sans-serif; font-size: 13px; font-weight: bold; } .sub { font-family: 'Inter', sans-serif; font-size: 11px; fill: #64748b; }</style>\n${colors.map((c, i) => `  <g transform="translate(${i * swatchW}, 0)">\n    <rect width="${swatchW}" height="100" fill="${c.hex}" />\n    <rect y="100" width="${swatchW}" height="60" fill="#ffffff" stroke="#e2e8f0" />\n    <text x="12" y="125" class="label" fill="#0f172a">${c.hex}</text>\n    <text x="12" y="145" class="sub">${c.name.slice(0, 14)}</text>\n  </g>`).join('\n')}\n</svg>`;
+      const swatchHtml = `<!DOCTYPE html>\n<html lang="en">\n<head>\n  <meta charset="UTF-8">\n  <meta name="viewport" content="width=device-width, initial-scale=1.0">\n  <title>${paletteName} - Web-Safe Color Palette</title>\n  <script src="https://cdn.tailwindcss.com"><\/script>\n  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@700;800&display=swap" rel="stylesheet">\n  <style>body{font-family:'Inter',sans-serif;}h1{font-family:'Plus Jakarta Sans','Inter',sans-serif;}</style>\n</head>\n<body class="bg-[#F8FAFC] text-slate-900 p-6 md:p-12 min-h-screen">\n  <div class="max-w-5xl mx-auto space-y-8">\n    <h1 class="text-3xl font-extrabold text-slate-900">${paletteName}</h1>\n    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-${Math.min(colors.length, 5)} gap-4">\n${colors.map((c, i) => `      <div class="bg-white rounded-xl border border-slate-200 overflow-hidden shadow-sm">\n        <div class="h-32 p-3.5 flex flex-col justify-between" style="background-color:${c.hex};color:${c.contrastWhite >= 4.5 ? '#ffffff' : '#000000'}">\n          <span class="text-xs font-mono font-bold">#${String(i + 1).padStart(2, '0')}</span>\n          <span class="text-2xl font-bold font-mono">${c.hex}</span>\n        </div>\n        <div class="p-3.5 text-xs"><p class="font-bold">${c.name}</p><p class="text-slate-500">${c.usage}</p></div>\n      </div>`).join('\n')}\n    </div>\n  </div>\n</body>\n</html>`;
+
+      const getCode = () => {
+        if (tab === 'css') return cssContent;
+        if (tab === 'tailwind') return tailwindContent;
+        if (tab === 'json') return jsonContent;
+        if (tab === 'svg') return svgContent;
+        return swatchHtml;
+      };
+
+      const handleDownload = () => {
+        const code = getCode();
+        const ext = tab === 'tailwind' ? 'js' : tab === 'html' ? 'html' : tab;
+        const blob = new Blob([code], { type: 'text/plain;charset=utf-8' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `${slug}.${ext}`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+      };
+
+      const handleCopy = () => {
+        navigator.clipboard.writeText(getCode());
+        setCopied(true);
+        setTimeout(() => setCopied(false), 2000);
+      };
+
+      return h('div', { className: 'fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm' }, [
+        h('div', { className: 'bg-white rounded-2xl max-w-2xl w-full border border-slate-200 shadow-xl overflow-hidden' }, [
+          h('div', { className: 'px-6 py-4 border-b border-slate-100 flex items-center justify-between' }, [
+            h('div', null, [
+              h('h3', { className: 'text-base font-bold text-slate-900' }, 'Export Palette'),
+              h('p', { className: 'text-xs text-slate-500' }, `Export ${paletteName} (${colors.length} colors) as CSS, Tailwind, JSON, SVG, or HTML`)
+            ]),
+            h('button', { type: 'button', onClick: onClose, className: 'psq-btn p-1.5 rounded-lg shrink-0', 'aria-label': 'Close export dialog' }, h(XIcon, { className: 'w-4 h-4' }))
+          ]),
+          h('div', { className: 'px-6 pt-4 flex items-center gap-1.5 border-b border-slate-100 pb-3 overflow-x-auto' },
+            [['css', 'CSS Variables'], ['tailwind', 'Tailwind'], ['json', 'JSON Tokens'], ['svg', 'SVG Strip'], ['html', 'Palette HTML']].map(([id, label]) =>
+              h('button', {
+                key: id,
+                type: 'button',
+                'data-segmented': 'true',
+                'data-active': tab === id ? 'true' : undefined,
+                onClick: () => setTab(id),
+                className: 'psq-btn px-3 py-1.5 rounded-lg text-xs font-semibold uppercase tracking-wider whitespace-nowrap shrink-0'
+              }, label)
+            )
+          ),
+          h('div', { className: 'p-6 space-y-4' }, [
+            h('pre', { className: 'p-4 bg-slate-900 text-slate-100 rounded-xl text-xs font-mono overflow-x-auto max-h-72 leading-relaxed selection:bg-[#71B94D] selection:text-white' }, h('code', null, getCode())),
+            h('div', { className: 'flex justify-end gap-2' }, [
+              h('button', {
+                type: 'button',
+                onClick: handleDownload,
+                className: 'psq-btn inline-flex items-center gap-1.5 px-3.5 py-2 text-xs font-semibold rounded-lg whitespace-nowrap'
+              }, [h(DownloadIcon, { className: 'w-3.5 h-3.5' }), h('span', null, `Download .${tab === 'tailwind' ? 'js' : tab}`)]),
+              h('button', {
+                type: 'button',
+                onClick: handleCopy,
+                className: 'psq-btn inline-flex items-center gap-1.5 px-4 py-2 text-xs font-semibold rounded-lg shadow-sm whitespace-nowrap'
+              }, [copied ? h(CheckIcon, { className: 'w-3.5 h-3.5' }) : h(CopyIcon, { className: 'w-3.5 h-3.5' }), h('span', null, copied ? 'Copied to Clipboard!' : 'Copy Code')])
+            ])
+          ])
+        ])
+      ]);
+    }
+
+    /* ==========================================================================
+       MAIN ROOT APP COMPONENT
+       ========================================================================== */
+    const MAX_STARTING_COLORS = 6;
+
+    function App() {
+      const [count, setCount] = useState(5);
+      const [style, setStyle] = useState('Vibrant Modern');
+      const [seedColors, setSeedColors] = useState(['#71B94D', '#10A3FF', '#FFB82A', '#FC57E5']);
+      const [strictWebSafe, setStrictWebSafe] = useState(true);
+      const [palette, setPalette] = useState(() => generateHarmonicPalette(5, 'Vibrant Modern', ['#71B94D', '#10A3FF', '#FFB82A', '#FC57E5'], true));
+      const [isExportOpen, setIsExportOpen] = useState(false);
+
+      // Starting Color inputs (HEX, RGB, CMYK)
+      const [inputFormat, setInputFormat] = useState('hex');
+      const [colorPickerVal, setColorPickerVal] = useState('#71B94D');
+      const [hexInput, setHexInput] = useState('');
+      const [rgbInput, setRgbInput] = useState({ r: '113', g: '185', b: '77' });
+      const [cmykInput, setCmykInput] = useState({ c: '39', m: '0', y: '58', k: '27' });
+      const [inputError, setInputError] = useState('');
+
+      // Image upload & sampling state
+      const [uploadedImage, setUploadedImage] = useState(null);
+      const [extractingImage, setExtractingImage] = useState(false);
+      const [imageError, setImageError] = useState('');
+      const [isDragging, setIsDragging] = useState(false);
+      const [sampledHex, setSampledHex] = useState(null);
+      const fileInputRef = useRef(null);
+
+      // Contrast matrix indices
+      const [fgIndex, setFgIndex] = useState(0);
+      const [bgIndex, setBgIndex] = useState(1);
+
+      const paletteRef = useRef(palette);
+      paletteRef.current = palette;
+      const hasMountedRef = useRef(false);
+      const skipNextAutoGenerateRef = useRef(false);
+
+      const syncAllInputsFromHex = (hex, updateHexText = true) => {
+        const clean = normalizeHex(hex);
+        if (!isValidHex(clean)) return;
+        const { r, g, b } = hexToRgb(clean);
+        const { c, m, y, k } = rgbToCmyk(r, g, b);
+        setColorPickerVal(clean);
+        if (updateHexText) setHexInput(clean);
+        setRgbInput({ r: String(r), g: String(g), b: String(b) });
+        setCmykInput({ c: String(c), m: String(m), y: String(y), k: String(k) });
+      };
+
+      const resolveCurrentInputHex = () => {
+        if (inputFormat === 'rgb') {
+          const r = Number(rgbInput.r), g = Number(rgbInput.g), b = Number(rgbInput.b);
+          if (
+            rgbInput.r.trim() === '' || rgbInput.g.trim() === '' || rgbInput.b.trim() === '' ||
+            Number.isNaN(r) || Number.isNaN(g) || Number.isNaN(b) ||
+            r < 0 || r > 255 || g < 0 || g > 255 || b < 0 || b > 255
+          ) {
+            return { hex: null, error: 'Enter RGB channel values between 0 and 255' };
+          }
+          return { hex: rgbToHex(r, g, b) };
+        }
+        if (inputFormat === 'cmyk') {
+          const c = Number(cmykInput.c), m = Number(cmykInput.m), y = Number(cmykInput.y), k = Number(cmykInput.k);
+          if (
+            cmykInput.c.trim() === '' || cmykInput.m.trim() === '' || cmykInput.y.trim() === '' || cmykInput.k.trim() === '' ||
+            Number.isNaN(c) || Number.isNaN(m) || Number.isNaN(y) || Number.isNaN(k) ||
+            c < 0 || c > 100 || m < 0 || m > 100 || y < 0 || y > 100 || k < 0 || k > 100
+          ) {
+            return { hex: null, error: 'Enter CMYK percentages between 0 and 100' };
+          }
+          return { hex: cmykToHex(c, m, y, k) };
+        }
+        const raw = (hexInput || colorPickerVal).trim();
+        const parsed = parseFlexibleColorInput(raw);
+        if (!parsed) {
+          return { hex: null, error: 'Enter a valid HEX (#71B94D), RGB, or CMYK value' };
+        }
+        return { hex: parsed };
+      };
+
+      const handleRgbFieldChange = (channel, val) => {
+        const next = { ...rgbInput, [channel]: val };
+        setRgbInput(next);
+        setInputError('');
+        const r = Number(next.r), g = Number(next.g), b = Number(next.b);
+        if (
+          next.r !== '' && next.g !== '' && next.b !== '' &&
+          !Number.isNaN(r) && !Number.isNaN(g) && !Number.isNaN(b) &&
+          r >= 0 && r <= 255 && g >= 0 && g <= 255 && b >= 0 && b <= 255
+        ) {
+          const hex = rgbToHex(r, g, b);
+          setColorPickerVal(hex);
+          setHexInput(hex);
+          const { c, m, y, k } = rgbToCmyk(r, g, b);
+          setCmykInput({ c: String(c), m: String(m), y: String(y), k: String(k) });
+        }
+      };
+
+      const handleCmykFieldChange = (channel, val) => {
+        const next = { ...cmykInput, [channel]: val };
+        setCmykInput(next);
+        setInputError('');
+        const c = Number(next.c), m = Number(next.m), y = Number(next.y), k = Number(next.k);
+        if (
+          next.c !== '' && next.m !== '' && next.y !== '' && next.k !== '' &&
+          !Number.isNaN(c) && !Number.isNaN(m) && !Number.isNaN(y) && !Number.isNaN(k) &&
+          c >= 0 && c <= 100 && m >= 0 && m <= 100 && y >= 0 && y <= 100 && k >= 0 && k <= 100
+        ) {
+          const hex = cmykToHex(c, m, y, k);
+          setColorPickerVal(hex);
+          setHexInput(hex);
+          const { r, g, b } = hexToRgb(hex);
+          setRgbInput({ r: String(r), g: String(g), b: String(b) });
+        }
+      };
+
+      const handleGenerate = useCallback((overrideSeeds, overrideCount) => {
+        const seedsToUse = Array.isArray(overrideSeeds) ? overrideSeeds : seedColors;
+        const countToUse = typeof overrideCount === 'number' ? overrideCount : count;
+        const current = paletteRef.current;
+        const locked = current ? current.colors : [];
+        const next = generateHarmonicPalette(countToUse, style, seedsToUse, strictWebSafe, locked);
+        setPalette(next);
+      }, [count, style, seedColors, strictWebSafe]);
+
+      const handleGenerateRef = useRef(handleGenerate);
+      handleGenerateRef.current = handleGenerate;
+
+      // Auto-generate when palette size, color harmony theory, strict 216 web-safe matrix, or starting colors change
+      useEffect(() => {
+        if (!hasMountedRef.current) {
+          hasMountedRef.current = true;
+          return;
+        }
+        if (skipNextAutoGenerateRef.current) {
+          skipNextAutoGenerateRef.current = false;
+          return;
+        }
+        const timer = window.setTimeout(() => {
+          handleGenerateRef.current();
+        }, 80);
+        return () => window.clearTimeout(timer);
+      }, [count, style, strictWebSafe, seedColors]);
+
+      // Persist clicked state (#73716D with white text) on action buttons once clicked
+      useEffect(() => {
+        const handleDocClick = (event) => {
+          const target = event.target;
+          const btn = target && target.closest ? target.closest('button.psq-btn:not([data-segmented="true"])') : null;
+          if (btn && !btn.disabled) {
+            btn.setAttribute('data-clicked', 'true');
+          }
+        };
+        document.addEventListener('click', handleDocClick);
+        return () => document.removeEventListener('click', handleDocClick);
+      }, []);
+
+      // Auto-adjust count if starting colors exceed count, capped at 10
+      useEffect(() => {
+        if (seedColors.length > count) {
+          setCount(Math.min(10, seedColors.length));
+        }
+      }, [seedColors.length, count]);
+
+      const handleAddColor = (hexToAdd) => {
+        if (seedColors.length >= MAX_STARTING_COLORS) {
+          setInputError(`Maximum ${MAX_STARTING_COLORS} starting colors allowed`);
+          return;
+        }
+        let resolvedHex = null;
+        if (hexToAdd) {
+          resolvedHex = parseFlexibleColorInput(hexToAdd);
+        } else {
+          const res = resolveCurrentInputHex();
+          if (!res.hex) {
+            setInputError(res.error || 'Enter a valid color value');
+            return;
+          }
+          resolvedHex = res.hex;
+        }
+        if (!resolvedHex || !isValidHex(resolvedHex)) {
+          setInputError('Enter a valid color value');
+          return;
+        }
+        const cleanHex = normalizeHex(resolvedHex);
+        if (seedColors.includes(cleanHex)) {
+          setInputError('Color already in starting colors');
+          return;
+        }
+        const nextColors = [...seedColors, cleanHex].slice(0, MAX_STARTING_COLORS);
+        setSeedColors(nextColors);
+        if (nextColors.length > count) setCount(Math.min(10, nextColors.length));
+        if (inputFormat === 'hex') setHexInput('');
+        setInputError('');
+      };
+
+      const handleRemoveColor = (color) => {
+        setSeedColors(seedColors.filter(c => c !== color));
+      };
+
+      const handleGenerateFromImage = useCallback((imageResult, mode = 'direct') => {
+        const topSeeds = imageResult.colors.slice(0, MAX_STARTING_COLORS);
+        const nextCount = Math.max(count, Math.min(10, topSeeds.length));
+        if (topSeeds.length > 0) {
+          skipNextAutoGenerateRef.current = true;
+          setSeedColors(topSeeds);
+          if (nextCount !== count) {
+            setCount(nextCount);
+          }
+        }
+        const current = paletteRef.current;
+        const locked = current ? current.colors : [];
+        if (mode === 'seeds') {
+          setPalette(generateHarmonicPalette(nextCount, style, topSeeds, strictWebSafe, locked));
+        } else {
+          setPalette(generatePaletteFromImageResult(imageResult, nextCount, style, strictWebSafe, locked));
+        }
+      }, [count, style, strictWebSafe]);
+
+      const handleProcessImageFile = async (file) => {
+        setExtractingImage(true);
+        setImageError('');
+        setSampledHex(null);
+        try {
+          const result = await extractColorsFromImageFile(file, 10);
+          setUploadedImage(result);
+          handleGenerateFromImage(result, 'direct');
+        } catch (err) {
+          setImageError((err && err.message) || 'Unable to process image file.');
+        } finally {
+          setExtractingImage(false);
+          if (fileInputRef.current) fileInputRef.current.value = '';
+        }
+      };
+
+      const handleToggleExtractedSwatch = (hex) => {
+        setInputError('');
+        if (seedColors.includes(hex)) {
+          setSeedColors(seedColors.filter(c => c !== hex));
+          return;
+        }
+        if (seedColors.length < MAX_STARTING_COLORS) {
+          const next = [...seedColors, hex];
+          setSeedColors(next);
+          if (next.length > count) setCount(Math.min(10, next.length));
+        } else {
+          setSeedColors([...seedColors.slice(0, MAX_STARTING_COLORS - 1), hex]);
+        }
+      };
+
+      const handleImageEyedropperClick = (e) => {
+        const sampled = sampleColorFromImageClick(e.currentTarget, e.clientX, e.clientY);
+        if (!sampled) return;
+        setSampledHex(sampled);
+        setInputError('');
+        if (!seedColors.includes(sampled)) {
+          if (seedColors.length < MAX_STARTING_COLORS) {
+            const next = [...seedColors, sampled];
+            setSeedColors(next);
+            if (next.length > count) setCount(Math.min(10, next.length));
+          } else {
+            setSeedColors([...seedColors.slice(0, MAX_STARTING_COLORS - 1), sampled]);
+          }
+        }
+      };
+
+      const handleToggleLock = (idx) => {
+        const next = [...palette.colors];
+        next[idx] = { ...next[idx], isLocked: !next[idx].isLocked };
+        setPalette({ ...palette, colors: next });
+      };
+
+      const handleSnapToWebSafe = (idx) => {
+        const next = [...palette.colors];
+        const target = next[idx];
+        const nearest = getNearestWebSafe(target.hex);
+        next[idx] = buildColorData(nearest, target.name, target.usage, target.isLocked, true);
+        setPalette({ ...palette, colors: next });
+      };
+
+      const handleUpdateColor = (idx, newHex) => {
+        const next = [...palette.colors];
+        next[idx] = buildColorData(newHex, next[idx].name, next[idx].usage, next[idx].isLocked, false);
+        setPalette({ ...palette, colors: next });
+      };
+
+      const handleSnapAllToWebSafe = () => {
+        const next = palette.colors.map(c => buildColorData(c.hex, c.name, c.usage, c.isLocked, true));
+        setPalette({ ...palette, colors: next });
+      };
+
+      const handleUnlockAll = () => {
+        setPalette({ ...palette, colors: palette.colors.map(c => ({ ...c, isLocked: false })) });
+      };
+
+      const previewResolved = resolveCurrentInputHex().hex || colorPickerVal;
+      const previewSafeHex = getNearestWebSafe(previewResolved);
+      const minCount = Math.max(2, seedColors.length);
+
+      return h('div', { className: 'min-h-screen flex flex-col bg-[#F8FAFC]' }, [
+        /* ================= 1. TOP BAR NAVIGATION ================= */
+        h('header', { key: 'header', className: 'border-b border-slate-200 bg-white/95 sticky top-0 z-40 backdrop-blur-md' }, [
+          h('div', { className: 'max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between gap-8' }, [
+            h('div', { className: 'flex items-center gap-3 whitespace-nowrap shrink-0' }, [
+              h('a', { href: '#top', className: 'flex items-center gap-3 group' }, [
+                h(ParentSquareLogo, { key: 'logo' }),
+                h('span', { key: 'div', className: 'hidden sm:inline-block h-5 w-px bg-slate-200' }),
+                h('div', { key: 'title', className: 'flex flex-col' }, [
+                  h('span', { className: 'text-sm font-extrabold tracking-tight text-slate-900 leading-none' }, 'Palette Studio'),
+                  h('span', { className: 'text-[10px] text-slate-400 font-medium' }, 'Web-Safe & WCAG Standards')
+                ])
+              ])
+            ]),
+
+            h('nav', { className: 'hidden md:flex items-center gap-6 text-xs font-medium text-slate-600' }, [
+              h('a', { href: '#controls', className: 'hover:text-[#71B94D] transition-colors whitespace-nowrap' }, 'Palette Generator'),
+              h('a', { href: '#cross-contrast', className: 'hover:text-[#71B94D] font-semibold transition-colors whitespace-nowrap flex items-center gap-1.5 text-slate-700' }, 'Contrast Matrix & Slider'),
+              h('a', { href: '#wcag-guide', className: 'hover:text-[#71B94D] transition-colors whitespace-nowrap' }, 'WCAG Accessibility'),
+              h('a', { href: '#web-safe-guide', className: 'hover:text-[#71B94D] transition-colors whitespace-nowrap' }, '216 Web-Safe Matrix')
+            ]),
+
+            h('div', { className: 'flex items-center gap-2 shrink-0' }, [
+              h('button', {
+                type: 'button',
+                onClick: () => setIsExportOpen(true),
+                disabled: !palette,
+                className: 'psq-btn inline-flex items-center gap-1.5 px-3.5 py-2 text-xs font-semibold rounded-lg whitespace-nowrap'
+              }, [h(DownloadIcon, { className: 'w-3.5 h-3.5' }), h('span', null, 'Export & Embed')])
+            ])
+          ])
+        ]),
+
+        /* ================= 2. MAIN CONTENT ================= */
+        h('main', { id: 'top', key: 'main', className: 'flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-10' }, [
+          // Hero Section
+          h('div', { className: 'mb-10 text-center max-w-3xl mx-auto space-y-3' }, [
+            h('div', { className: 'inline-flex items-center gap-2 text-xs font-semibold text-slate-600' }, [
+              h('span', { className: 'inline-grid grid-cols-2 gap-0.5 w-3.5 h-3.5 shrink-0', 'aria-hidden': 'true' }, [
+                h('span', { key: '1', className: 'rounded-tl-full bg-[#68E246]' }),
+                h('span', { key: '2', className: 'rounded-tr-full bg-[#10A3FF]' }),
+                h('span', { key: '3', className: 'rounded-bl-full bg-[#FC57E5]' }),
+                h('span', { key: '4', className: 'rounded-br-full bg-[#FFB82A]' })
+              ]),
+              h('span', { className: 'text-slate-700 font-semibold tracking-wide uppercase text-[11px]' }, 'ParentSquare Universal Color Harmony Engine')
+            ]),
+            h('h1', { className: 'text-3xl sm:text-5xl font-extrabold text-slate-900 tracking-tight' }, 'Web-Safe Color Palette Studio'),
+            h('p', { className: 'text-slate-600 text-sm sm:text-base leading-relaxed' },
+              'Input 1 to 6 starting colors as HEX, RGB, or CMYK (or upload a logo/photo) to generate a complete 216 web-safe harmonious palette of up to 10 colors. Every shade is evaluated in real time for WCAG AA/AAA contrast.'
+            )
+          ]),
+
+          // Generator Controls
+          h('div', { id: 'controls', className: 'bg-white rounded-2xl border border-slate-200/80 shadow-sm overflow-hidden mb-10' }, [
+            h('div', { className: 'h-1.5 w-full', style: { background: 'linear-gradient(90deg, #68E246 0%, #10A3FF 33%, #FFB82A 66%, #FC57E5 100%)' } }),
+            h('div', { className: 'p-6 md:p-8 space-y-8' }, [
+              // Section 1: Starting Colors
+              h('div', { className: 'space-y-4' }, [
+                h('div', { className: 'flex flex-col sm:flex-row sm:items-center justify-between gap-2' }, [
+                  h('div', null, [
+                    h('div', { className: 'flex items-center gap-2' }, [
+                      h('span', { className: 'text-xs font-bold uppercase tracking-wider text-slate-700' }, 'Starting Colors'),
+                      h('span', { className: 'text-xs font-mono font-semibold text-slate-500' }, `· ${seedColors.length} of ${MAX_STARTING_COLORS} colors`)
+                    ]),
+                    h('p', { className: 'text-xs text-slate-500 mt-0.5' }, `Provide anywhere from 1 to ${MAX_STARTING_COLORS} starting colors (HEX, RGB, or CMYK) to anchor your web-safe palette.`)
+                  ]),
+                  h('div', { className: 'flex items-center gap-1.5 overflow-x-auto pb-1 sm:pb-0' }, [
+                    h('span', { className: 'text-[11px] font-medium text-slate-500 whitespace-nowrap' }, 'Presets:'),
+                    STARTER_PRESETS.map(preset => {
+                      const isActivePreset = preset.colors.length === seedColors.length && preset.colors.every((c, idx) => c === seedColors[idx]);
+                      return h('button', {
+                        key: preset.name,
+                        type: 'button',
+                        'data-segmented': 'true',
+                        'data-active': isActivePreset ? 'true' : undefined,
+                        onClick: () => {
+                          const nextColors = preset.colors.slice(0, MAX_STARTING_COLORS);
+                          setSeedColors(nextColors);
+                          if (nextColors.length > count) setCount(Math.min(10, nextColors.length));
+                          setInputError('');
+                        },
+                        title: `${preset.description} (${preset.colors.length} colors)`,
+                        className: 'psq-btn px-2.5 py-1 text-xs font-semibold rounded-md whitespace-nowrap flex items-center gap-1.5 shrink-0'
+                      }, [
+                        h('div', { className: 'flex -space-x-1' },
+                          preset.colors.map((c, i) => h('span', { key: i, className: 'w-2.5 h-2.5 rounded-full ring-1 ring-white/80', style: { backgroundColor: c } }))
+                        ),
+                        h('span', null, preset.name)
+                      ]);
+                    })
+                  ])
+                ]),
+
+                // 6 Starting Color Slots
+                h('div', { className: 'grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3' },
+                  [0, 1, 2, 3, 4, 5].map(slotIdx => {
+                    const color = seedColors[slotIdx];
+                    const safeEquivalent = color ? getNearestWebSafe(color) : '';
+                    const exactWebSafe = color ? isWebSafe(color) : false;
+                    if (color) {
+                      return h('div', { key: slotIdx, className: 'p-3 rounded-xl border border-slate-300 bg-white shadow-sm flex items-center justify-between' }, [
+                        h('div', { className: 'flex items-center gap-3 min-w-0' }, [
+                          h('span', { className: 'w-8 h-8 rounded-lg shadow-inner border border-black/10 shrink-0', style: { backgroundColor: color } }),
+                          h('div', { className: 'min-w-0' }, [
+                            h('div', { className: 'flex items-center gap-1.5' }, [
+                              h('p', { className: 'text-[11px] font-bold uppercase text-slate-400' }, `Color ${slotIdx + 1}`),
+                              strictWebSafe && !exactWebSafe && h('span', {
+                                className: 'text-[10px] font-mono font-semibold text-emerald-700 bg-emerald-50 border border-emerald-200 px-1.5 py-0.5 rounded',
+                                title: `Converts to 216 web-safe ${safeEquivalent} in the generated palette`
+                              }, `→ ${safeEquivalent}`)
+                            ]),
+                            h('p', { className: 'text-sm font-bold font-mono text-slate-900 truncate' }, color)
+                          ])
+                        ]),
+                        h('button', {
+                          type: 'button',
+                          onClick: () => handleRemoveColor(color),
+                          'aria-label': `Remove color ${color}`,
+                          className: 'psq-btn p-1.5 rounded-lg shrink-0'
+                        }, h(XIcon, { className: 'w-3.5 h-3.5' }))
+                      ]);
+                    }
+                    return h('div', { key: slotIdx, className: 'p-3 rounded-xl border border-dashed border-slate-200 bg-slate-50/50 flex items-center justify-between w-full text-slate-400 text-xs' }, [
+                      h('div', { className: 'flex items-center gap-2' }, [
+                        h('div', { className: 'w-8 h-8 rounded-lg border-2 border-dashed border-slate-300 flex items-center justify-center font-mono text-xs font-bold text-slate-400' }, slotIdx + 1),
+                        h('span', { className: 'font-medium' }, 'Empty Slot')
+                      ]),
+                      h('span', { className: 'text-[11px] font-mono' }, 'Optional')
+                    ]);
+                  })
+                ),
+
+                // Add Color Input Bar (HEX, RGB, CMYK)
+                h('div', { className: 'flex flex-wrap items-center gap-3 pt-2' }, [
+                  // Format Switcher
+                  h('div', { className: 'inline-flex items-center gap-1 p-1 bg-slate-100 border border-slate-200 rounded-lg text-[11px] font-semibold' },
+                    ['hex', 'rgb', 'cmyk'].map(fmt =>
+                      h('button', {
+                        key: fmt,
+                        type: 'button',
+                        'data-segmented': 'true',
+                        'data-active': inputFormat === fmt ? 'true' : undefined,
+                        onClick: () => { setInputFormat(fmt); setInputError(''); },
+                        className: 'psq-btn px-2.5 py-1.5 rounded-md uppercase tracking-wider font-bold whitespace-nowrap'
+                      }, fmt)
+                    )
+                  ),
+
+                  // Native Swatch Picker
+                  h('input', {
+                    type: 'color',
+                    value: colorPickerVal,
+                    onChange: (e) => { syncAllInputsFromHex(e.target.value, true); setInputError(''); },
+                    disabled: seedColors.length >= MAX_STARTING_COLORS,
+                    className: 'w-10 h-10 rounded-lg border border-slate-300 p-0.5 cursor-pointer bg-white disabled:opacity-40 shrink-0',
+                    title: 'Choose color'
+                  }),
+
+                  // HEX Input
+                  inputFormat === 'hex' && h('div', { className: 'relative w-44' }, [
+                    h('span', { className: 'absolute inset-y-0 left-0 pl-2.5 flex items-center text-slate-400 font-mono text-xs pointer-events-none' }, '#'),
+                    h('input', {
+                      type: 'text',
+                      value: hexInput.replace(/^#/, ''),
+                      onChange: (e) => {
+                        const val = e.target.value;
+                        setHexInput(val);
+                        setInputError('');
+                        const parsed = parseFlexibleColorInput(val);
+                        if (parsed) syncAllInputsFromHex(parsed, false);
+                      },
+                      onKeyDown: (e) => e.key === 'Enter' && handleAddColor(),
+                      disabled: seedColors.length >= MAX_STARTING_COLORS,
+                      placeholder: colorPickerVal.replace('#', ''),
+                      'aria-label': 'HEX color code or pasted RGB/CMYK',
+                      className: 'w-full pl-6 pr-2.5 py-2 text-xs font-mono bg-slate-50 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#71B94D] disabled:opacity-50'
+                    })
+                  ]),
+
+                  // RGB Inputs
+                  inputFormat === 'rgb' && h('div', { className: 'flex items-center gap-1.5' },
+                    ['r', 'g', 'b'].map(ch =>
+                      h('div', { key: ch, className: 'relative w-20' }, [
+                        h('span', { className: 'absolute inset-y-0 left-0 pl-2 flex items-center text-slate-400 font-mono text-[11px] font-bold uppercase pointer-events-none' }, ch),
+                        h('input', {
+                          type: 'number',
+                          min: 0,
+                          max: 255,
+                          value: rgbInput[ch],
+                          onChange: (e) => handleRgbFieldChange(ch, e.target.value),
+                          onKeyDown: (e) => e.key === 'Enter' && handleAddColor(),
+                          disabled: seedColors.length >= MAX_STARTING_COLORS,
+                          'aria-label': `RGB ${ch.toUpperCase()} value`,
+                          className: 'w-full pl-6 pr-1.5 py-2 text-xs font-mono bg-slate-50 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#71B94D] disabled:opacity-50'
+                        })
+                      ])
+                    )
+                  ),
+
+                  // CMYK Inputs
+                  inputFormat === 'cmyk' && h('div', { className: 'flex items-center gap-1.5 flex-wrap' },
+                    ['c', 'm', 'y', 'k'].map(ch =>
+                      h('div', { key: ch, className: 'relative w-[4.6rem]' }, [
+                        h('span', { className: 'absolute inset-y-0 left-0 pl-2 flex items-center text-slate-400 font-mono text-[11px] font-bold uppercase pointer-events-none' }, ch),
+                        h('input', {
+                          type: 'number',
+                          min: 0,
+                          max: 100,
+                          value: cmykInput[ch],
+                          onChange: (e) => handleCmykFieldChange(ch, e.target.value),
+                          onKeyDown: (e) => e.key === 'Enter' && handleAddColor(),
+                          disabled: seedColors.length >= MAX_STARTING_COLORS,
+                          'aria-label': `CMYK ${ch.toUpperCase()} percentage`,
+                          className: 'w-full pl-6 pr-4 py-2 text-xs font-mono bg-slate-50 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#71B94D] disabled:opacity-50'
+                        }),
+                        h('span', { className: 'absolute inset-y-0 right-0 pr-1.5 flex items-center text-slate-400 font-mono text-[10px] pointer-events-none' }, '%')
+                      ])
+                    )
+                  ),
+
+                  h('button', {
+                    type: 'button',
+                    onClick: () => handleAddColor(),
+                    disabled: seedColors.length >= MAX_STARTING_COLORS,
+                    className: 'psq-btn inline-flex items-center gap-1.5 px-3.5 py-2 text-xs font-semibold rounded-lg whitespace-nowrap'
+                  }, [h(PlusIcon, { className: 'w-3.5 h-3.5' }), h('span', null, `Add Color (${seedColors.length}/${MAX_STARTING_COLORS})`)]),
+
+                  (inputFormat !== 'hex' || (strictWebSafe && !isWebSafe(previewResolved))) && h('span', {
+                    className: 'inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-slate-50 border border-slate-200 text-[11px] font-mono text-slate-600'
+                  }, [
+                    h('span', { className: 'w-2.5 h-2.5 rounded-sm border border-black/15', style: { backgroundColor: strictWebSafe ? previewSafeHex : previewResolved } }),
+                    h('span', null, `${inputFormat !== 'hex' ? `HEX ${previewResolved}` : ''}${inputFormat !== 'hex' && strictWebSafe ? ' · ' : ''}${strictWebSafe ? `Safe ${previewSafeHex}` : ''}`)
+                  ]),
+
+                  seedColors.length > 0 && h('button', {
+                    type: 'button',
+                    onClick: () => setSeedColors([]),
+                    className: 'psq-btn px-3 py-2 text-xs font-semibold rounded-lg whitespace-nowrap'
+                  }, 'Clear All Colors'),
+                  inputError && h('span', { className: 'text-xs text-rose-500 font-medium' }, inputError)
+                ]),
+
+                // Extract Palette from Image or Logo
+                h('div', { className: 'pt-3' }, [
+                  h('input', {
+                    ref: fileInputRef,
+                    type: 'file',
+                    accept: 'image/*',
+                    onChange: (e) => {
+                      const file = e.target.files && e.target.files[0];
+                      if (file) handleProcessImageFile(file);
+                    },
+                    className: 'hidden'
+                  }),
+                  !uploadedImage
+                    ? h('div', {
+                        onDragOver: (e) => { e.preventDefault(); e.stopPropagation(); setIsDragging(true); },
+                        onDragLeave: (e) => { e.preventDefault(); e.stopPropagation(); setIsDragging(false); },
+                        onDrop: (e) => {
+                          e.preventDefault(); e.stopPropagation(); setIsDragging(false);
+                          const file = e.dataTransfer.files && e.dataTransfer.files[0];
+                          if (file) handleProcessImageFile(file);
+                        },
+                        className: `rounded-xl border border-dashed p-4 transition-colors flex flex-col sm:flex-row sm:items-center justify-between gap-3 ${isDragging ? 'border-[#71B94D] bg-[#71B94D]/10' : 'border-slate-300 bg-slate-50/60 hover:bg-slate-50'}`
+                      }, [
+                        h('div', { className: 'flex items-center gap-3 min-w-0' }, [
+                          h('div', { className: 'w-10 h-10 rounded-lg bg-white border border-slate-200 flex items-center justify-center text-[#71B94D] shrink-0 shadow-sm' },
+                            h(ImageIcon, { className: 'w-5 h-5' })
+                          ),
+                          h('div', { className: 'min-w-0' }, [
+                            h('p', { className: 'text-xs font-bold text-slate-800' }, 'Extract Palette from Image or Logo'),
+                            h('p', { className: 'text-[11px] text-slate-500' }, 'Upload or drop a PNG, JPG, WebP, GIF, or SVG to pull dominant colors or sample pixels directly.')
+                          ])
+                        ]),
+                        h('button', {
+                          type: 'button',
+                          onClick: () => fileInputRef.current && fileInputRef.current.click(),
+                          disabled: extractingImage,
+                          className: 'psq-btn inline-flex items-center gap-1.5 px-3.5 py-2 text-xs font-semibold rounded-lg shadow-sm shrink-0 whitespace-nowrap'
+                        }, [
+                          h(UploadIcon, { className: 'w-3.5 h-3.5' }),
+                          h('span', null, extractingImage ? 'Analyzing Image...' : 'Upload Image')
+                        ])
+                      ])
+                    : h('div', { className: 'rounded-xl border border-slate-200 bg-slate-50/70 p-4 space-y-4' }, [
+                        h('div', { className: 'flex flex-col md:flex-row gap-4 items-stretch' }, [
+                          h('div', { className: 'md:w-56 shrink-0 flex flex-col justify-between bg-white rounded-lg border border-slate-200 p-2.5 gap-2' }, [
+                            h('div', {
+                              className: 'relative flex-1 min-h-28 max-h-36 flex items-center justify-center rounded-md overflow-hidden border border-slate-100',
+                              style: { backgroundImage: 'repeating-conic-gradient(#f1f5f9 0% 25%, #ffffff 0% 50%)', backgroundSize: '16px 16px' }
+                            },
+                              h('img', {
+                                src: uploadedImage.previewUrl,
+                                alt: uploadedImage.fileName,
+                                onClick: handleImageEyedropperClick,
+                                title: 'Click anywhere on the image to sample a pixel color into your starting colors',
+                                className: 'max-h-32 max-w-full object-contain cursor-crosshair select-none'
+                              })
+                            ),
+                            h('div', { className: 'flex items-center justify-between gap-2 text-[11px] text-slate-500' }, [
+                              h('span', { className: 'truncate font-medium', title: uploadedImage.fileName }, uploadedImage.fileName),
+                              sampledHex
+                                ? h('span', { className: 'inline-flex items-center gap-1 font-mono font-semibold text-slate-700 shrink-0' }, [
+                                    h('span', { className: 'w-2.5 h-2.5 rounded-sm border border-black/15', style: { backgroundColor: sampledHex } }),
+                                    sampledHex
+                                  ])
+                                : h('span', { className: 'text-[10px] text-slate-400 shrink-0' }, 'Click pixel to sample')
+                            ])
+                          ]),
+                          h('div', { className: 'flex-1 flex flex-col justify-between gap-3 min-w-0' }, [
+                            h('div', { className: 'space-y-2' }, [
+                              h('div', { className: 'flex flex-wrap items-center justify-between gap-2' }, [
+                                h('div', null, [
+                                  h('span', { className: 'text-xs font-bold uppercase tracking-wider text-slate-700' }, `Extracted Image Colors (${uploadedImage.colors.length})`),
+                                  h('p', { className: 'text-[11px] text-slate-500' }, 'Click any swatch to toggle it in your Starting Colors, or click the image to sample a pixel.')
+                                ]),
+                                h('div', { className: 'flex items-center gap-2' }, [
+                                  h('button', {
+                                    type: 'button',
+                                    onClick: () => fileInputRef.current && fileInputRef.current.click(),
+                                    className: 'psq-btn px-2.5 py-1 text-[11px] font-semibold rounded-md whitespace-nowrap'
+                                  }, 'Replace Image'),
+                                  h('button', {
+                                    type: 'button',
+                                    onClick: () => { setUploadedImage(null); setImageError(''); setSampledHex(null); },
+                                    className: 'psq-btn px-2.5 py-1 text-[11px] font-semibold rounded-md whitespace-nowrap'
+                                  }, 'Clear')
+                                ])
+                              ]),
+                              h('div', { className: 'flex flex-wrap gap-2 pt-1' },
+                                uploadedImage.colors.map(hex => {
+                                  const isSelected = seedColors.includes(hex);
+                                  return h('button', {
+                                    key: hex,
+                                    type: 'button',
+                                    'data-segmented': 'true',
+                                    'data-active': isSelected ? 'true' : undefined,
+                                    onClick: () => handleToggleExtractedSwatch(hex),
+                                    className: 'psq-btn inline-flex items-center gap-2 px-2.5 py-1.5 rounded-lg text-xs font-mono font-semibold whitespace-nowrap'
+                                  }, [
+                                    h('span', { className: 'w-4 h-4 rounded-sm border border-white/70 shrink-0 flex items-center justify-center', style: { backgroundColor: hex } },
+                                      isSelected && h(CheckIcon, { className: 'w-2.5 h-2.5 text-white drop-shadow' })
+                                    ),
+                                    h('span', null, hex)
+                                  ]);
+                                })
+                              )
+                            ]),
+                            h('div', { className: 'flex flex-wrap items-center gap-2 pt-2 border-t border-slate-200/80' }, [
+                              h('button', {
+                                type: 'button',
+                                onClick: () => handleGenerateFromImage(uploadedImage, 'direct'),
+                                disabled: extractingImage,
+                                className: 'psq-btn inline-flex items-center gap-1.5 px-3.5 py-2 text-xs font-semibold rounded-lg shadow-sm whitespace-nowrap'
+                              }, [h(SparklesIcon, { className: 'w-3.5 h-3.5' }), h('span', null, 'Create Palette from Image')]),
+                              h('button', {
+                                type: 'button',
+                                onClick: () => handleGenerateFromImage(uploadedImage, 'seeds'),
+                                disabled: extractingImage,
+                                className: 'psq-btn inline-flex items-center gap-1.5 px-3.5 py-2 text-xs font-semibold rounded-lg whitespace-nowrap'
+                              }, `Harmonize Colors with ${style}`)
+                            ])
+                          ])
+                        ])
+                      ]),
+                  imageError && h('p', { className: 'text-xs text-rose-600 font-medium mt-2' }, imageError)
+                ])
+              ]),
+
+              // Section 2: Auto-Updating Generation Options (Count, Style, WebSafe)
+              h('div', { className: 'pt-6 border-t border-slate-100 grid grid-cols-1 md:grid-cols-3 gap-6 items-start' }, [
+                h('div', { className: 'space-y-2' }, [
+                  h('div', { className: 'flex justify-between items-center' }, [
+                    h('label', { className: 'text-xs font-bold uppercase tracking-wider text-slate-700' }, 'Palette Size (Max 10)'),
+                    h('span', { className: 'text-xs font-mono font-bold text-[#4E8433] bg-[#71B94D]/15 px-2 py-0.5 rounded' }, `${count} colors`)
+                  ]),
+                  h('div', { className: 'flex items-center gap-1' },
+                    [3, 4, 5, 6, 8, 10].map(num =>
+                      h('button', {
+                        key: num,
+                        type: 'button',
+                        'data-segmented': 'true',
+                        'data-active': count === num ? 'true' : undefined,
+                        onClick: () => setCount(Math.max(minCount, num)),
+                        className: 'psq-btn flex-1 py-1.5 text-xs font-semibold rounded-md shadow-sm'
+                      }, num)
+                    )
+                  ),
+                  h('div', { className: 'flex items-center gap-3 pt-1' }, [
+                    h('span', { className: 'text-[11px] text-slate-400 font-mono' }, minCount),
+                    h('input', {
+                      type: 'range',
+                      min: minCount,
+                      max: 10,
+                      value: count,
+                      onChange: (e) => setCount(parseInt(e.target.value, 10)),
+                      className: 'w-full h-1.5 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-[#71B94D]'
+                    }),
+                    h('span', { className: 'text-[11px] text-slate-400 font-mono' }, '10')
+                  ])
+                ]),
+
+                h('div', { className: 'space-y-2' }, [
+                  h('label', { className: 'text-xs font-bold uppercase tracking-wider text-slate-700' }, 'Color Harmony Theory'),
+                  h('div', { className: 'relative' }, [
+                    h('select', {
+                      value: style,
+                      onChange: (e) => setStyle(e.target.value),
+                      className: 'w-full appearance-none bg-slate-50 border border-slate-200 text-slate-800 text-xs py-2.5 px-3.5 pr-8 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#71B94D] font-medium'
+                    }, HARMONY_THEORIES.map(t => h('option', { key: t.id, value: t.id }, t.name))),
+                    h('div', { className: 'pointer-events-none absolute inset-y-0 right-0 flex items-center px-2.5 text-slate-400' }, '▼')
+                  ]),
+                  h('p', { className: 'text-[11px] text-slate-500 font-medium' },
+                    HARMONY_THEORIES.find(t => t.id === style)?.desc || 'Determines algorithmic relationships between generated tones.'
+                  )
+                ]),
+
+                h('div', { className: 'space-y-2' }, [
+                  h('span', { className: 'block text-xs font-bold uppercase tracking-wider text-slate-700' }, 'Web-Safe Enforcement'),
+                  h('label', {
+                    className: `flex items-start gap-3 p-3 rounded-lg border cursor-pointer select-none transition-colors ${strictWebSafe ? 'bg-[#71B94D]/10 border-[#71B94D]/40' : 'bg-slate-50 border-slate-200 hover:bg-slate-100/70'}`
+                  }, [
+                    h('input', {
+                      type: 'checkbox',
+                      checked: strictWebSafe,
+                      onChange: (e) => setStrictWebSafe(e.target.checked),
+                      className: 'mt-0.5 w-4 h-4 rounded accent-[#71B94D] focus:ring-[#71B94D] border-slate-300 shrink-0'
+                    }),
+                    h('div', { className: 'min-w-0' }, [
+                      h('span', { className: 'text-xs font-semibold text-slate-800 flex items-center gap-1.5' }, [
+                        h(ShieldCheckIcon, { className: 'w-3.5 h-3.5 text-[#71B94D] shrink-0' }),
+                        h('span', null, 'Strict 216 Web-Safe Matrix')
+                      ]),
+                      h('p', { className: 'text-[11px] text-slate-500 mt-0.5 leading-snug' },
+                        'Snaps all generated hex codes to standard 00, 33, 66, 99, CC, FF stops.'
+                      )
+                    ])
+                  ])
+                ])
+              ])
+            ])
+          ]),
+
+          // Palette Display Section
+          palette && h('div', { className: 'space-y-6' }, [
+            h('div', { className: 'flex flex-col md:flex-row md:items-end justify-between pb-4 border-b border-slate-200 gap-4' }, [
+              h('div', null, [
+                h('h2', { className: 'text-2xl font-bold text-slate-900' }, palette.paletteName),
+                h('p', { className: 'text-xs text-slate-600 mt-1' }, palette.description),
+                h('div', { className: 'flex flex-wrap items-center gap-2 text-xs text-slate-500 mt-2 font-mono' }, [
+                  h('span', null, `${palette.colors.length} Colors`),
+                  h('span', null, '·'),
+                  h('span', null, style),
+                  h('span', null, '·'),
+                  h('span', null, `${seedColors.length} Starting Colors`),
+                  h('span', null, '·'),
+                  h('span', null, `${palette.colors.filter(c => c.isWebSafe).length}/${palette.colors.length} Web-Safe`)
+                ])
+              ]),
+              h('div', { className: 'flex items-center gap-2 flex-wrap' }, [
+                palette.colors.some(c => c.isLocked) && h('button', {
+                  type: 'button',
+                  onClick: handleUnlockAll,
+                  className: 'psq-btn inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold rounded-lg whitespace-nowrap'
+                }, `Unlock All (${palette.colors.filter(c => c.isLocked).length})`),
+                h('button', {
+                  type: 'button',
+                  onClick: handleSnapAllToWebSafe,
+                  className: 'psq-btn inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold rounded-lg whitespace-nowrap'
+                }, [h(ShieldCheckIcon, { className: 'w-3.5 h-3.5 text-white' }), h('span', null, 'Snap All to 216 Safe')]),
+                h('button', {
+                  type: 'button',
+                  onClick: () => handleGenerate(),
+                  className: 'psq-btn inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold rounded-lg whitespace-nowrap'
+                }, [h(RefreshIcon, { className: 'w-3.5 h-3.5' }), h('span', null, 'Shuffle')])
+              ])
+            ]),
+
+            // Color Cards Grid
+            h('div', { className: 'grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4' },
+              palette.colors.map((color, index) => h(ColorCard, {
+                key: `color-slot-${index}`,
+                color,
+                index,
+                onToggleLock: handleToggleLock,
+                onSnapToWebSafe: handleSnapToWebSafe,
+                onUpdateColor: handleUpdateColor,
+                onSelectForContrast: (idx) => {
+                  setFgIndex(idx);
+                  document.getElementById('cross-contrast')?.scrollIntoView({ behavior: 'smooth' });
+                }
+              }))
+            ),
+
+            // Cross-Color Contrast Matrix
+            h(ContrastMatrix, {
+              colors: palette.colors,
+              fgIndex,
+              setFgIndex,
+              bgIndex,
+              setBgIndex,
+              onUpdateColor: handleUpdateColor
+            })
+          ]),
+
+          // Educational Reference Section
+          h('div', { className: 'grid grid-cols-1 md:grid-cols-2 gap-6 mt-16' }, [
+            h('section', { id: 'wcag-guide', className: 'bg-white rounded-2xl border border-slate-200/80 p-6 md:p-8 shadow-sm' }, [
+              h('span', { className: 'text-xs font-bold uppercase tracking-wider text-slate-400' }, 'Accessibility Standards'),
+              h('h3', { className: 'text-lg font-bold text-slate-900 mt-1' }, 'WCAG 2.1 Contrast Requirements'),
+              h('p', { className: 'text-xs text-slate-600 mt-2 leading-relaxed' },
+                'Every color in your palette is checked in real time against both pure white (#FFFFFF) and pure black (#000000).'
+              ),
+              h('div', { className: 'grid grid-cols-2 gap-3 mt-4 text-xs' }, [
+                h('div', { className: 'p-3 bg-slate-50 rounded-xl border border-slate-200 space-y-1' }, [
+                  h('span', { className: 'font-bold text-slate-800' }, 'Level AA (Standard)'),
+                  h('p', { className: 'text-[11px] text-slate-500 leading-normal' }, ['Small text (<18pt): ≥ 4.5:1', h('br'), 'Large text (≥18pt): ≥ 3.0:1'])
+                ]),
+                h('div', { className: 'p-3 bg-slate-50 rounded-xl border border-slate-200 space-y-1' }, [
+                  h('span', { className: 'font-bold text-slate-800' }, 'Level AAA (Enhanced)'),
+                  h('p', { className: 'text-[11px] text-slate-500 leading-normal' }, ['Small text (<18pt): ≥ 7.0:1', h('br'), 'Large text (≥18pt): ≥ 4.5:1'])
+                ])
+              ])
+            ]),
+            h('section', { id: 'web-safe-guide', className: 'bg-white rounded-2xl border border-slate-200/80 p-6 md:p-8 shadow-sm' }, [
+              h('span', { className: 'text-xs font-bold uppercase tracking-wider text-slate-400' }, 'Color Space Matrix'),
+              h('h3', { className: 'text-lg font-bold text-slate-900 mt-1' }, 'The 216 Web-Safe Matrix'),
+              h('p', { className: 'text-xs text-slate-600 mt-2 leading-relaxed' },
+                'Web-safe colors ensure identical color reproduction across any digital display or browser without dithering. The palette is formed by 6 stepped intensities per RGB channel:'
+              ),
+              h('div', { className: 'flex flex-wrap items-center gap-1.5 mt-4' },
+                ['00 (0)', '33 (51)', '66 (102)', '99 (153)', 'CC (204)', 'FF (255)'].map(step =>
+                  h('span', { key: step, className: 'px-2.5 py-1 bg-slate-100 text-slate-800 font-mono text-xs rounded-md font-semibold' }, step)
+                )
+              ),
+              h('p', { className: 'text-[11px] text-slate-400 mt-3 font-mono' }, '6 × 6 × 6 = 216 universal, predictable coordinates.')
+            ])
+          ])
+        ]),
+
+        /* ================= 3. FOOTER ================= */
+        h('footer', { className: 'border-t border-slate-200 bg-white py-8 mt-16 text-center text-xs text-slate-500' }, [
+          h('div', { className: 'max-w-7xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-4' }, [
+            h('div', { className: 'flex items-center gap-3' }, [
+              h(ParentSquareLogo, { className: 'h-5 w-auto object-contain opacity-75' }),
+              h('span', { className: 'h-3.5 w-px bg-slate-300' }),
+              h('span', { className: 'font-bold text-slate-700' }, 'Palette Studio'),
+              h('span', null, '· Universal Web-Safe & WCAG Color System')
+            ]),
+            h('p', { className: 'text-slate-400' }, 'Accessible Digital Design Tokens')
+          ])
+        ]),
+
+        /* ================= 4. EXPORT MODAL ================= */
+        palette && h(ExportModal, {
+          isOpen: isExportOpen,
+          onClose: () => setIsExportOpen(false),
+          paletteName: palette.paletteName,
+          colors: palette.colors
+        })
+      ]);
+    }
+
+    (function mountApp() {
+      const rootEl = document.getElementById('root');
+      if (!rootEl) return;
+      try {
+        if (typeof React === 'undefined' || typeof ReactDOM === 'undefined') {
+          throw new Error('React libraries failed to load from CDN. Check network access and reload.');
+        }
+        ReactDOM.createRoot(rootEl).render(React.createElement(App));
+      } catch (err) {
+        rootEl.innerHTML = '<div style="max-width:600px;margin:48px auto;padding:24px;background:#fff;border:1px solid #fecdd3;border-radius:12px;font-family:sans-serif;color:#be123c;"><h2 style="margin:0 0 8px 0;font-size:16px;">Unable to initialize Web-Safe Color Palette Studio</h2><p style="margin:0;font-size:13px;color:#475569;">' + String(err && err.message || err) + '</p></div>';
+      }
+    })();
+  </script>
+</body>
+</html>
